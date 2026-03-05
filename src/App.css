@@ -18,8 +18,8 @@
 .header {
   text-align: center;
   padding: 2rem 1rem;
-  background: linear-gradient(135deg, #1A6B8A 0%, #2E8B9A 100%);
-  color: white;
+  background: linear-gradient(135deg, #7CB8C9 0%, #A8D5E5 50%, #F5E6D3 100%);
+  color: #4A5568;
 }
 
 .hero-image {
@@ -45,8 +45,9 @@
 
 .subtitle {
   margin: 0.5rem 0 0;
-  opacity: 0.9;
+  opacity: 0.85;
   font-size: 1.1rem;
+  color: #5A6B7A;
 }
 
 /* メイン */
@@ -65,14 +66,21 @@
   margin: 1.5rem 0 1rem;
 }
 
+/* チャレンジボタンエリア */
+.challenge-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
 /* 全問チャレンジボタン */
 .all-challenge-btn {
   width: 100%;
   padding: 1.2rem;
   font-size: 1.2rem;
   font-weight: bold;
-  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
-  color: white;
+  background: linear-gradient(135deg, #E8B4B8 0%, #EDD1B0 100%);
+  color: #5D4E4E;
   border: none;
   border-radius: 12px;
   cursor: pointer;
@@ -81,7 +89,26 @@
 
 .all-challenge-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+  box-shadow: 0 4px 12px rgba(232, 180, 184, 0.5);
+}
+
+/* 未回答問題ボタン */
+.unanswered-challenge-btn {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #B8D4E8 0%, #D4E8D4 100%);
+  color: #4A5D4A;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.unanswered-challenge-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(184, 212, 232, 0.5);
 }
 
 .btn-icon {
@@ -132,11 +159,11 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1A6B8A 0%, #2E8B9A 100%);
+  background: linear-gradient(135deg, #A8D5E5 0%, #B8E0D2 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: #4A6670;
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
 }
@@ -152,6 +179,47 @@
   font-size: 0.85rem;
   color: #666;
   margin-top: 0.3rem;
+}
+
+/* カテゴリーカード（ボタン+未回答） */
+.category-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.unanswered-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 0.5rem;
+  background: linear-gradient(135deg, #FFE4B5 0%, #FFDAB9 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #8B4513;
+  transition: all 0.2s;
+}
+
+.unanswered-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(139, 69, 19, 0.2);
+}
+
+.all-answered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 0.5rem;
+  background: #E8F5E9;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #4CAF50;
 }
 
 /* フッター */
@@ -197,13 +265,13 @@
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #1A6B8A, #2E8B9A);
+  background: linear-gradient(90deg, #A8D5E5, #B8E0D2);
   transition: width 0.3s;
 }
 
 .score-display {
   font-weight: bold;
-  color: #1A6B8A;
+  color: #5A8A9A;
   white-space: nowrap;
 }
 
@@ -220,11 +288,12 @@
 .category-tag {
   display: inline-block;
   padding: 0.3rem 0.8rem;
-  background: #1A6B8A;
-  color: white;
+  background: linear-gradient(135deg, #A8D5E5 0%, #B8E0D2 100%);
+  color: #4A6670;
   border-radius: 20px;
   font-size: 0.85rem;
   margin-bottom: 1rem;
+  font-weight: bold;
 }
 
 .question-card {
@@ -337,7 +406,7 @@
   background: white;
   padding: 1rem;
   border-radius: 8px;
-  border-left: 4px solid #1A6B8A;
+  border-left: 4px solid #A8D5E5;
 }
 
 .next-btn {
@@ -345,16 +414,17 @@
   padding: 1rem;
   font-size: 1.1rem;
   font-weight: bold;
-  background: linear-gradient(135deg, #1A6B8A 0%, #2E8B9A 100%);
-  color: white;
+  background: linear-gradient(135deg, #A8D5E5 0%, #B8E0D2 100%);
+  color: #4A6670;
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .next-btn:hover {
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(168, 213, 229, 0.5);
 }
 
 /* 結果画面 */
@@ -396,7 +466,7 @@
 .score-number {
   font-size: 4rem;
   font-weight: bold;
-  color: #1A6B8A;
+  color: #5A8A9A;
 }
 
 .score-total {
@@ -474,8 +544,8 @@
 }
 
 .retry-btn {
-  background: linear-gradient(135deg, #1A6B8A 0%, #2E8B9A 100%);
-  color: white;
+  background: linear-gradient(135deg, #A8D5E5 0%, #B8E0D2 100%);
+  color: #4A6670;
 }
 
 .home-btn {
@@ -543,7 +613,7 @@
 .stat-number {
   font-size: 1.8rem;
   font-weight: bold;
-  color: #1A6B8A;
+  color: #5A8A9A;
 }
 
 .stat-label {
@@ -557,18 +627,17 @@
   padding: 1rem;
   font-size: 1.1rem;
   font-weight: bold;
-  background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
-  color: white;
+  background: linear-gradient(135deg, #F5D0C5 0%, #E8C8D4 100%);
+  color: #6B4A5A;
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  margin-top: 0.8rem;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .wrong-challenge-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+  box-shadow: 0 4px 12px rgba(245, 208, 197, 0.5);
 }
 
 /* 履歴・リセットボタン */

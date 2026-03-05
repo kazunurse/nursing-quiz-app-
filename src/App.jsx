@@ -67,7 +67,8 @@ const getCategoryIcon = (categoryName) => {
 const STORAGE_KEYS = {
   HISTORY: 'nursing-quiz-history',
   WRONG_ANSWERS: 'nursing-quiz-wrong',
-  STATS: 'nursing-quiz-stats'
+  STATS: 'nursing-quiz-stats',
+  ANSWERED: 'nursing-quiz-answered'  // 回答済み問題
 }
 
 // ローカルストレージ操作
@@ -102,6 +103,7 @@ function App() {
   const [stats, setStats] = useState({ totalQuizzes: 0, totalCorrect: 0, totalQuestions: 0 })
   const [history, setHistory] = useState([])
   const [wrongAnswers, setWrongAnswers] = useState([])
+  const [answeredQuestions, setAnsweredQuestions] = useState([])  // 回答済み問題ID
 
   // データと保存データを読み込み
   useEffect(() => {
@@ -114,10 +116,12 @@ function App() {
     const savedStats = storage.get(STORAGE_KEYS.STATS)
     const savedHistory = storage.get(STORAGE_KEYS.HISTORY)
     const savedWrong = storage.get(STORAGE_KEYS.WRONG_ANSWERS)
+    const savedAnswered = storage.get(STORAGE_KEYS.ANSWERED)
 
     if (savedStats) setStats(savedStats)
     if (savedHistory) setHistory(savedHistory)
     if (savedWrong) setWrongAnswers(savedWrong)
+    if (savedAnswered) setAnsweredQuestions(savedAnswered)
   }, [])
 
   // 結果を保存
@@ -149,6 +153,12 @@ function App() {
     const updatedWrong = [...new Set([...wrongAnswers, ...wrongIds])]
     setWrongAnswers(updatedWrong)
     storage.set(STORAGE_KEYS.WRONG_ANSWERS, updatedWrong)
+
+    // 回答済み問題を保存
+    const answeredIds = answers.map(a => a.questionId)
+    const updatedAnswered = [...new Set([...answeredQuestions, ...answeredIds])]
+    setAnsweredQuestions(updatedAnswered)
+    storage.set(STORAGE_KEYS.ANSWERED, updatedAnswered)
   }
 
   // 間違えた問題から削除（正解したら）
@@ -162,10 +172,10 @@ function App() {
     return <div className="loading">読み込み中...</div>
   }
 
-  // カテゴリー選択
+  // カテゴリー選択（全問題）
   const selectCategory = (category) => {
     const questions = data.questions.filter(q => q.category === category.name)
-    setQuizQuestions(questions)
+    setQuizQuestions(questions.sort(() => Math.random() - 0.5))
     setSelectedCategory(category)
     setCurrentQuestionIndex(0)
     setScore(0)
@@ -175,10 +185,53 @@ function App() {
     setScreen('quiz')
   }
 
+  // カテゴリー選択（未回答のみ）
+  const selectCategoryUnanswered = (category) => {
+    const questions = data.questions.filter(q =>
+      q.category === category.name && !answeredQuestions.includes(q.id)
+    )
+    if (questions.length === 0) {
+      alert('このカテゴリーは全問回答済みです！')
+      return
+    }
+    setQuizQuestions(questions.sort(() => Math.random() - 0.5))
+    setSelectedCategory({ name: `${category.name}（未回答）` })
+    setCurrentQuestionIndex(0)
+    setScore(0)
+    setAnswers([])
+    setSelectedAnswer(null)
+    setShowExplanation(false)
+    setScreen('quiz')
+  }
+
+  // カテゴリーの未回答数を取得
+  const getUnansweredCount = (categoryName) => {
+    return data.questions.filter(q =>
+      q.category === categoryName && !answeredQuestions.includes(q.id)
+    ).length
+  }
+
   // 全問チャレンジ
   const startAllQuestions = () => {
     setQuizQuestions([...data.questions].sort(() => Math.random() - 0.5))
     setSelectedCategory({ name: '全問チャレンジ' })
+    setCurrentQuestionIndex(0)
+    setScore(0)
+    setAnswers([])
+    setSelectedAnswer(null)
+    setShowExplanation(false)
+    setScreen('quiz')
+  }
+
+  // 未回答問題のみチャレンジ
+  const startUnansweredQuestions = () => {
+    const unanswered = data.questions.filter(q => !answeredQuestions.includes(q.id))
+    if (unanswered.length === 0) {
+      alert('全ての問題に回答済みです！')
+      return
+    }
+    setQuizQuestions(unanswered.sort(() => Math.random() - 0.5))
+    setSelectedCategory({ name: '未回答問題' })
     setCurrentQuestionIndex(0)
     setScore(0)
     setAnswers([])
@@ -257,9 +310,11 @@ function App() {
       localStorage.removeItem(STORAGE_KEYS.HISTORY)
       localStorage.removeItem(STORAGE_KEYS.WRONG_ANSWERS)
       localStorage.removeItem(STORAGE_KEYS.STATS)
+      localStorage.removeItem(STORAGE_KEYS.ANSWERED)
       setStats({ totalQuizzes: 0, totalCorrect: 0, totalQuestions: 0 })
       setHistory([])
       setWrongAnswers([])
+      setAnsweredQuestions([])
     }
   }
 
@@ -302,34 +357,58 @@ function App() {
             </div>
           )}
 
-          <button className="all-challenge-btn" onClick={startAllQuestions}>
-            <MdPlayArrow className="btn-icon" />
-            全問チャレンジ ({data.questions.length}問)
-          </button>
-
-          {wrongAnswers.length > 0 && (
-            <button className="wrong-challenge-btn" onClick={startWrongQuestions}>
-              <FaRedo className="btn-icon" />
-              間違えた問題に挑戦 ({wrongAnswers.length}問)
+          <div className="challenge-buttons">
+            <button className="all-challenge-btn" onClick={startAllQuestions}>
+              <MdPlayArrow className="btn-icon" />
+              全問チャレンジ ({data.questions.length}問)
             </button>
-          )}
+
+            {data.questions.length - answeredQuestions.length > 0 && (
+              <button className="unanswered-challenge-btn" onClick={startUnansweredQuestions}>
+                <FaQuestionCircle className="btn-icon" />
+                未回答のみ ({data.questions.length - answeredQuestions.length}問)
+              </button>
+            )}
+
+            {wrongAnswers.length > 0 && (
+              <button className="wrong-challenge-btn" onClick={startWrongQuestions}>
+                <FaRedo className="btn-icon" />
+                間違えた問題 ({wrongAnswers.length}問)
+              </button>
+            )}
+          </div>
 
           <h2><MdQuiz className="section-icon" /> カテゴリーを選択</h2>
           <div className="category-grid">
             {data.categories.map(category => {
               const IconComponent = getCategoryIcon(category.name)
+              const unansweredCount = getUnansweredCount(category.name)
+              const allAnswered = unansweredCount === 0
               return (
-                <button
-                  key={category.id}
-                  className="category-btn"
-                  onClick={() => selectCategory(category)}
-                >
-                  <div className="category-icon">
-                    <IconComponent />
-                  </div>
-                  <span className="category-name">{category.name}</span>
-                  <span className="category-count">{category.questionCount}問</span>
-                </button>
+                <div key={category.id} className="category-card">
+                  <button
+                    className="category-btn"
+                    onClick={() => selectCategory(category)}
+                  >
+                    <div className="category-icon">
+                      <IconComponent />
+                    </div>
+                    <span className="category-name">{category.name}</span>
+                    <span className="category-count">{category.questionCount}問</span>
+                  </button>
+                  {!allAnswered ? (
+                    <button
+                      className="unanswered-btn"
+                      onClick={() => selectCategoryUnanswered(category)}
+                    >
+                      <FaQuestionCircle /> 未回答 {unansweredCount}問
+                    </button>
+                  ) : (
+                    <div className="all-answered">
+                      <FaCheckCircle /> 全問回答済
+                    </div>
+                  )}
+                </div>
               )
             })}
           </div>
