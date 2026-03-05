@@ -5,10 +5,14 @@ import {
   FaBookMedical, FaSyringe, FaStethoscope, FaNotesMedical,
   FaTrophy, FaFire, FaStar, FaCheckCircle, FaTimesCircle,
   FaArrowLeft, FaArrowRight, FaHome, FaRedo, FaHistory,
-  FaTrash, FaQuestionCircle, FaGraduationCap, FaChartLine
+  FaTrash, FaQuestionCircle, FaGraduationCap, FaChartLine,
+  FaEye, FaHandHoldingMedical, FaShieldVirus, FaBaby,
+  FaCut, FaRibbon, FaBalanceScale, FaAppleAlt, FaRunning,
+  FaAllergies, FaBacteria, FaTint, FaThermometerHalf
 } from 'react-icons/fa'
-import { GiKidneys, GiStomach, GiMedicines } from 'react-icons/gi'
-import { MdQuiz, MdPlayArrow } from 'react-icons/md'
+import { GiKidneys, GiStomach, GiMedicines, GiNurseFemale, GiSkeletonInside } from 'react-icons/gi'
+import { MdQuiz, MdPlayArrow, MdBloodtype, MdOutlineElderly } from 'react-icons/md'
+import { BiBody } from 'react-icons/bi'
 
 // 問題データをインポート（Notionから取得したデータ）
 // データがない場合はサンプルデータを使用
@@ -40,21 +44,32 @@ const sampleData = {
 
 // カテゴリーアイコンのマッピング
 const categoryIcons = {
+  // 身体系統
   '循環器系': FaHeart,
   '呼吸器系': FaLungs,
-  '神経系': FaBrain,
   '消化器系': GiStomach,
-  '腎・泌尿器系': GiKidneys,
-  '骨・筋肉系': FaBone,
-  '小児看護': FaChild,
+  '泌尿器系': GiKidneys,
+  '内分泌・代謝系': FaThermometerHalf,
+  '血液・造血器系': FaTint,
+  '脳神経系': FaBrain,
+  '運動器系': FaRunning,
+  '感覚器系': FaEye,
+  '皮膚科': FaHandHoldingMedical,
+  '免疫・アレルギー・膠原病': FaAllergies,
+  '感染症': FaShieldVirus,
+  '生殖器系': FaBaby,
+  // 看護分野
+  '周手術期看護': FaCut,
+  'がん看護': FaRibbon,
   '母性看護': FaUserNurse,
-  '基礎看護': FaBookMedical,
-  '薬理学': GiMedicines,
-  '成人看護': FaSyringe,
-  '老年看護': FaStethoscope,
+  '小児看護': FaChild,
   '精神看護': FaBrain,
-  '在宅看護': FaHome,
-  '公衆衛生': FaNotesMedical,
+  '老年看護': MdOutlineElderly,
+  '在宅・地域看護': FaHome,
+  '看護技術・基礎': FaBookMedical,
+  '法律・制度': FaBalanceScale,
+  '栄養代謝': FaAppleAlt,
+  // デフォルト
   'default': FaQuestionCircle
 }
 
