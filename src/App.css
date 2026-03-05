@@ -33,6 +33,14 @@
 .header h1 {
   margin: 0;
   font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.title-icon {
+  font-size: 1.5rem;
 }
 
 .subtitle {
@@ -76,6 +84,23 @@
   box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
 }
 
+.btn-icon {
+  margin-right: 0.5rem;
+  font-size: 1.3rem;
+  vertical-align: middle;
+}
+
+.btn-icon-small {
+  margin-right: 0.3rem;
+  font-size: 1rem;
+  vertical-align: middle;
+}
+
+.section-icon {
+  margin-right: 0.3rem;
+  vertical-align: middle;
+}
+
 /* カテゴリーグリッド */
 .category-grid {
   display: grid;
@@ -100,6 +125,20 @@
   border-color: #1A6B8A;
   background: #f8f9fa;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(26, 107, 138, 0.2);
+}
+
+.category-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1A6B8A 0%, #2E8B9A 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .category-name {
@@ -277,6 +316,17 @@
 .explanation h3 {
   margin: 0 0 1rem;
   font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.explanation h3.correct-title {
+  color: #4CAF50;
+}
+
+.explanation h3.incorrect-title {
+  color: #f44336;
 }
 
 .explanation p {
@@ -462,6 +512,32 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  margin-bottom: 0.3rem;
+}
+
+.stat-icon.fire {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
+  color: white;
+}
+
+.stat-icon.trophy {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: white;
+}
+
+.stat-icon.star {
+  background: linear-gradient(135deg, #9B59B6 0%, #8E44AD 100%);
+  color: white;
 }
 
 .stat-number {

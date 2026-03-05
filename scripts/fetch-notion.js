@@ -2,6 +2,7 @@ import 'dotenv/config';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import readline from 'readline';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -144,6 +145,70 @@ async function getQuestionsFromDatabase(databaseId, categoryName) {
   }
 }
 
+// ユーザー入力を取得
+function askQuestion(query) {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  return new Promise(resolve => rl.question(query, ans => {
+    rl.close();
+    resolve(ans);
+  }));
+}
+
+// 既存データと新規データの差分を表示
+function showDiff(existingData, newQuestions, newCategories) {
+  const existingQuestionIds = new Set((existingData?.questions || []).map(q => q.id));
+  const newQuestionIds = new Set(newQuestions.map(q => q.id));
+
+  // 新規追加された問題
+  const addedQuestions = newQuestions.filter(q => !existingQuestionIds.has(q.id));
+
+  // 削除された問題
+  const removedQuestions = (existingData?.questions || []).filter(q => !newQuestionIds.has(q.id));
+
+  console.log('\n========================================');
+  console.log('📊 更新内容の確認');
+  console.log('========================================\n');
+
+  console.log(`📝 現在の問題数: ${existingData?.questions?.length || 0}問`);
+  console.log(`📝 新しい問題数: ${newQuestions.length}問\n`);
+
+  // カテゴリーごとの問題数
+  console.log('📂 カテゴリー別:');
+  for (const cat of newCategories.filter(c => c.questionCount > 0)) {
+    const existingCat = existingData?.categories?.find(c => c.name === cat.name);
+    const diff = cat.questionCount - (existingCat?.questionCount || 0);
+    const diffStr = diff > 0 ? `(+${diff})` : diff < 0 ? `(${diff})` : '';
+    console.log(`  • ${cat.name}: ${cat.questionCount}問 ${diffStr}`);
+  }
+
+  if (addedQuestions.length > 0) {
+    console.log('\n✨ 新規追加される問題:');
+    for (const q of addedQuestions) {
+      const shortQuestion = q.question.substring(0, 50) + (q.question.length > 50 ? '...' : '');
+      console.log(`  [${q.category}] ${shortQuestion}`);
+    }
+  }
+
+  if (removedQuestions.length > 0) {
+    console.log('\n🗑️ 削除される問題:');
+    for (const q of removedQuestions) {
+      const shortQuestion = q.question.substring(0, 50) + (q.question.length > 50 ? '...' : '');
+      console.log(`  [${q.category}] ${shortQuestion}`);
+    }
+  }
+
+  if (addedQuestions.length === 0 && removedQuestions.length === 0) {
+    console.log('\n✅ 変更はありません');
+  }
+
+  console.log('\n========================================\n');
+
+  return { addedQuestions, removedQuestions };
+}
+
 // メイン処理
 async function main() {
   console.log('Notionからデータを取得中...');
@@ -169,8 +234,31 @@ async function main() {
     }
   }
 
-  // JSONファイルに保存
+  // 既存のデータを読み込み
   const outputDir = path.join(__dirname, '..', 'src', 'data');
+  const outputPath = path.join(outputDir, 'questions.json');
+  let existingData = null;
+
+  if (fs.existsSync(outputPath)) {
+    try {
+      existingData = JSON.parse(fs.readFileSync(outputPath, 'utf-8'));
+    } catch (e) {
+      console.log('既存ファイルの読み込みに失敗しました');
+    }
+  }
+
+  // 差分を表示
+  const { addedQuestions, removedQuestions } = showDiff(existingData, allQuestions, categories);
+
+  // 確認を求める
+  const answer = await askQuestion('この内容で更新しますか？ (y/n): ');
+
+  if (answer.toLowerCase() !== 'y' && answer.toLowerCase() !== 'yes') {
+    console.log('❌ キャンセルしました');
+    process.exit(0);
+  }
+
+  // JSONファイルに保存
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
@@ -182,13 +270,13 @@ async function main() {
   };
 
   fs.writeFileSync(
-    path.join(outputDir, 'questions.json'),
+    outputPath,
     JSON.stringify(outputData, null, 2),
     'utf-8'
   );
 
-  console.log(`\n完了！ ${allQuestions.length}問を保存しました。`);
-  console.log(`保存先: src/data/questions.json`);
+  console.log(`\n✅ 完了！ ${allQuestions.length}問を保存しました。`);
+  console.log(`📁 保存先: src/data/questions.json`);
 }
 
 main().catch(console.error);

@@ -1,5 +1,14 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import {
+  FaHeart, FaBrain, FaLungs, FaBone, FaChild, FaUserNurse,
+  FaBookMedical, FaSyringe, FaStethoscope, FaNotesMedical,
+  FaTrophy, FaFire, FaStar, FaCheckCircle, FaTimesCircle,
+  FaArrowLeft, FaArrowRight, FaHome, FaRedo, FaHistory,
+  FaTrash, FaQuestionCircle, FaGraduationCap, FaChartLine
+} from 'react-icons/fa'
+import { GiKidneys, GiStomach, GiMedicines } from 'react-icons/gi'
+import { MdQuiz, MdPlayArrow } from 'react-icons/md'
 
 // 問題データをインポート（Notionから取得したデータ）
 // データがない場合はサンプルデータを使用
@@ -27,6 +36,31 @@ const sampleData = {
       tags: ['心臓の構造']
     }
   ]
+}
+
+// カテゴリーアイコンのマッピング
+const categoryIcons = {
+  '循環器系': FaHeart,
+  '呼吸器系': FaLungs,
+  '神経系': FaBrain,
+  '消化器系': GiStomach,
+  '腎・泌尿器系': GiKidneys,
+  '骨・筋肉系': FaBone,
+  '小児看護': FaChild,
+  '母性看護': FaUserNurse,
+  '基礎看護': FaBookMedical,
+  '薬理学': GiMedicines,
+  '成人看護': FaSyringe,
+  '老年看護': FaStethoscope,
+  '精神看護': FaBrain,
+  '在宅看護': FaHome,
+  '公衆衛生': FaNotesMedical,
+  'default': FaQuestionCircle
+}
+
+// カテゴリーアイコンを取得
+const getCategoryIcon = (categoryName) => {
+  return categoryIcons[categoryName] || categoryIcons['default']
 }
 
 // ローカルストレージのキー
@@ -239,7 +273,7 @@ function App() {
       <div className="app">
         <header className="header">
           <img src="/hero.png" alt="看護師国家試験対策" className="hero-image" />
-          <h1>看護師国家試験アプリ</h1>
+          <h1><FaGraduationCap className="title-icon" /> 看護師国家試験アプリ</h1>
           <p className="subtitle">かずからの挑戦状</p>
         </header>
 
@@ -247,17 +281,20 @@ function App() {
           {/* 学習統計 */}
           {stats.totalQuizzes > 0 && (
             <div className="stats-card">
-              <h3>学習の記録</h3>
+              <h3><FaChartLine className="section-icon" /> 学習の記録</h3>
               <div className="stats-grid">
                 <div className="stat-item">
+                  <div className="stat-icon fire"><FaFire /></div>
                   <span className="stat-number">{stats.totalQuizzes}</span>
                   <span className="stat-label">回挑戦</span>
                 </div>
                 <div className="stat-item">
+                  <div className="stat-icon trophy"><FaTrophy /></div>
                   <span className="stat-number">{overallPercentage}%</span>
                   <span className="stat-label">正解率</span>
                 </div>
                 <div className="stat-item">
+                  <div className="stat-icon star"><FaStar /></div>
                   <span className="stat-number">{wrongAnswers.length}</span>
                   <span className="stat-label">要復習</span>
                 </div>
@@ -266,37 +303,45 @@ function App() {
           )}
 
           <button className="all-challenge-btn" onClick={startAllQuestions}>
+            <MdPlayArrow className="btn-icon" />
             全問チャレンジ ({data.questions.length}問)
           </button>
 
           {wrongAnswers.length > 0 && (
             <button className="wrong-challenge-btn" onClick={startWrongQuestions}>
+              <FaRedo className="btn-icon" />
               間違えた問題に挑戦 ({wrongAnswers.length}問)
             </button>
           )}
 
-          <h2>カテゴリーを選択</h2>
+          <h2><MdQuiz className="section-icon" /> カテゴリーを選択</h2>
           <div className="category-grid">
-            {data.categories.map(category => (
-              <button
-                key={category.id}
-                className="category-btn"
-                onClick={() => selectCategory(category)}
-              >
-                <span className="category-name">{category.name}</span>
-                <span className="category-count">{category.questionCount}問</span>
-              </button>
-            ))}
+            {data.categories.map(category => {
+              const IconComponent = getCategoryIcon(category.name)
+              return (
+                <button
+                  key={category.id}
+                  className="category-btn"
+                  onClick={() => selectCategory(category)}
+                >
+                  <div className="category-icon">
+                    <IconComponent />
+                  </div>
+                  <span className="category-name">{category.name}</span>
+                  <span className="category-count">{category.questionCount}問</span>
+                </button>
+              )
+            })}
           </div>
 
           {/* 履歴・リセットボタン */}
           {stats.totalQuizzes > 0 && (
             <div className="history-actions">
               <button className="history-btn" onClick={() => setScreen('history')}>
-                学習履歴を見る
+                <FaHistory className="btn-icon-small" /> 学習履歴を見る
               </button>
               <button className="reset-btn" onClick={resetData}>
-                データをリセット
+                <FaTrash className="btn-icon-small" /> データをリセット
               </button>
             </div>
           )}
@@ -314,8 +359,8 @@ function App() {
     return (
       <div className="app">
         <header className="quiz-header">
-          <button className="back-btn" onClick={goHome}>← 戻る</button>
-          <h2 style={{ flex: 1, textAlign: 'center', margin: 0 }}>学習履歴</h2>
+          <button className="back-btn" onClick={goHome}><FaArrowLeft /> 戻る</button>
+          <h2 style={{ flex: 1, textAlign: 'center', margin: 0 }}><FaHistory className="section-icon" /> 学習履歴</h2>
           <div style={{ width: '60px' }}></div>
         </header>
 
@@ -356,7 +401,7 @@ function App() {
     return (
       <div className="app">
         <header className="quiz-header">
-          <button className="back-btn" onClick={goHome}>← 戻る</button>
+          <button className="back-btn" onClick={goHome}><FaArrowLeft /> 戻る</button>
           <div className="progress">
             <span>{currentQuestionIndex + 1} / {quizQuestions.length}</span>
             <div className="progress-bar">
@@ -405,10 +450,12 @@ function App() {
 
           {showExplanation && (
             <div className="explanation">
-              <h3>{selectedAnswer === question.answer ? '⭕ 正解！' : '❌ 不正解'}</h3>
+              <h3 className={selectedAnswer === question.answer ? 'correct-title' : 'incorrect-title'}>
+                {selectedAnswer === question.answer ? <><FaCheckCircle /> 正解！</> : <><FaTimesCircle /> 不正解</>}
+              </h3>
               <p>{question.explanation}</p>
               <button className="next-btn" onClick={nextQuestion}>
-                {currentQuestionIndex < quizQuestions.length - 1 ? '次の問題へ →' : '結果を見る'}
+                {currentQuestionIndex < quizQuestions.length - 1 ? <>次の問題へ <FaArrowRight /></> : <>結果を見る <FaTrophy /></>}
               </button>
             </div>
           )}
@@ -473,10 +520,10 @@ function App() {
               setShowExplanation(false)
               setScreen('quiz')
             }}>
-              もう一度挑戦
+              <FaRedo className="btn-icon" /> もう一度挑戦
             </button>
             <button className="home-btn" onClick={goHome}>
-              ホームに戻る
+              <FaHome className="btn-icon" /> ホームに戻る
             </button>
           </div>
         </main>
