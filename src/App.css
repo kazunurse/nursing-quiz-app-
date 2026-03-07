@@ -50,34 +50,29 @@
   color: #5A6B7A;
 }
 
-/* ヘルプボタン */
-.help-btn {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+/* ヘルプボタン（メイン） */
+.help-btn-main {
+  margin-top: 1rem;
+  padding: 0.6rem 1.5rem;
   background: rgba(255, 255, 255, 0.9);
   border: 2px solid #7CB8C9;
+  border-radius: 25px;
   color: #4A6670;
-  font-size: 1.2rem;
+  font-size: 0.95rem;
+  font-weight: bold;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 0.5rem;
   transition: all 0.2s;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.help-btn:hover {
+.help-btn-main:hover {
   background: #7CB8C9;
   color: white;
-  transform: scale(1.1);
-}
-
-.header {
-  position: relative;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(124, 184, 201, 0.4);
 }
 
 /* モーダル */

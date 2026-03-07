@@ -491,12 +491,12 @@ function App() {
     return (
       <div className="app">
         <header className="header">
-          <button className="help-btn" onClick={() => setShowHelp(true)}>
-            <FaQuestionCircle />
-          </button>
           <img src="/hero.png" alt="看護師国家試験対策" className="hero-image" />
           <h1><FaGraduationCap className="title-icon" /> 看護師国家試験アプリ</h1>
           <p className="subtitle">かずからの挑戦状</p>
+          <button className="help-btn-main" onClick={() => setShowHelp(true)}>
+            <FaQuestionCircle /> 使い方
+          </button>
         </header>
 
         {/* ヘルプモーダル */}
