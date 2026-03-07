@@ -306,6 +306,33 @@
   color: #4CAF50;
 }
 
+.category-sub-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.wrong-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 0.5rem;
+  background: linear-gradient(135deg, #FFCDD2 0%, #EF9A9A 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #C62828;
+  transition: all 0.2s;
+}
+
+.wrong-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(198, 40, 40, 0.2);
+}
+
 /* フッター */
 .footer {
   text-align: center;
@@ -933,21 +960,137 @@
   margin: 1rem 0;
 }
 
-/* レスポンシブ */
+/* レスポンシブ - タブレット */
+@media (max-width: 768px) {
+  .category-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+  }
+
+  .stats-grid {
+    gap: 1rem;
+  }
+
+  .correct-answer-box {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .correct-answer-item {
+    width: 100%;
+  }
+}
+
+/* レスポンシブ - スマホ */
 @media (max-width: 480px) {
+  .header {
+    padding: 1.5rem 1rem;
+  }
+
   .header h1 {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+  }
+
+  .main {
+    padding: 1rem;
   }
 
   .category-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
+
+  .category-btn {
+    padding: 0.8rem 0.5rem;
+    min-height: 120px;
+  }
+
+  .category-name {
+    font-size: 0.85rem;
+  }
+
+  .category-count {
+    font-size: 0.75rem;
+  }
+
+  .category-progress-badge {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .unanswered-btn,
+  .wrong-btn,
+  .all-answered {
+    font-size: 0.7rem;
+    padding: 0.4rem;
   }
 
   .quiz-header {
     flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.8rem;
+  }
+
+  .back-btn {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .question-card {
+    padding: 1rem;
+  }
+
+  .question-text {
+    font-size: 1rem;
+  }
+
+  .choice-btn {
+    padding: 0.8rem;
+  }
+
+  .choice-number {
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
+  }
+
+  .choice-text {
+    font-size: 0.95rem;
+  }
+
+  .explanation-actions {
+    flex-direction: column;
+  }
+
+  .next-btn,
+  .save-btn {
+    width: 100%;
+  }
+
+  .confirm-btn {
+    font-size: 1rem;
+    padding: 0.8rem;
   }
 
   .score-number {
     font-size: 3rem;
+  }
+
+  .result-card {
+    padding: 1.5rem;
+  }
+
+  .challenge-buttons {
+    flex-direction: column;
+  }
+
+  .all-challenge-btn,
+  .unanswered-challenge-btn,
+  .wrong-challenge-btn {
+    width: 100%;
   }
 }

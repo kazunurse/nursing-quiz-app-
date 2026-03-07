@@ -238,6 +238,32 @@ function App() {
     ).length
   }
 
+  // カテゴリーの間違えた問題数を取得
+  const getWrongCount = (categoryName) => {
+    return data.questions.filter(q =>
+      q.category === categoryName && wrongAnswers.includes(q.id)
+    ).length
+  }
+
+  // カテゴリー別の間違えた問題に挑戦
+  const startCategoryWrongQuestions = (category) => {
+    const wrongQuestions = data.questions.filter(q =>
+      q.category === category.name && wrongAnswers.includes(q.id)
+    )
+    if (wrongQuestions.length === 0) {
+      alert('このカテゴリーで間違えた問題はありません！')
+      return
+    }
+    setQuizQuestions(wrongQuestions.sort(() => Math.random() - 0.5))
+    setSelectedCategory({ name: `${category.name}（復習）` })
+    setCurrentQuestionIndex(0)
+    setScore(0)
+    setAnswers([])
+    setSelectedAnswers([])
+    setShowExplanation(false)
+    setScreen('quiz')
+  }
+
   // 全問チャレンジ
   const startAllQuestions = () => {
     setQuizQuestions([...data.questions].sort(() => Math.random() - 0.5))
@@ -386,6 +412,18 @@ function App() {
     setCategoryProgress(newProgress)
     storage.set(STORAGE_KEYS.CATEGORY_PROGRESS, newProgress)
 
+    // 回答済み問題を保存（一時保存でも回答済みとして記録）
+    const answeredIds = answers.map(a => a.questionId)
+    const updatedAnswered = [...new Set([...answeredQuestions, ...answeredIds])]
+    setAnsweredQuestions(updatedAnswered)
+    storage.set(STORAGE_KEYS.ANSWERED, updatedAnswered)
+
+    // 間違えた問題も保存
+    const wrongIds = answers.filter(a => !a.isCorrect).map(a => a.questionId)
+    const updatedWrong = [...new Set([...wrongAnswers, ...wrongIds])]
+    setWrongAnswers(updatedWrong)
+    storage.set(STORAGE_KEYS.WRONG_ANSWERS, updatedWrong)
+
     setScreen('home')
     setSelectedCategory(null)
     setQuizQuestions([])
@@ -480,6 +518,7 @@ function App() {
             {data.categories.map(category => {
               const IconComponent = getCategoryIcon(category.name)
               const unansweredCount = getUnansweredCount(category.name)
+              const wrongCount = getWrongCount(category.name)
               const allAnswered = unansweredCount === 0
               const savedIndex = categoryProgress[category.name] || 0
               const hasProgress = savedIndex > 0
@@ -500,18 +539,28 @@ function App() {
                       </span>
                     )}
                   </button>
-                  {!allAnswered ? (
-                    <button
-                      className="unanswered-btn"
-                      onClick={() => selectCategoryUnanswered(category)}
-                    >
-                      <FaQuestionCircle /> 未回答 {unansweredCount}問
-                    </button>
-                  ) : (
-                    <div className="all-answered">
-                      <FaCheckCircle /> 全問回答済
-                    </div>
-                  )}
+                  <div className="category-sub-buttons">
+                    {!allAnswered ? (
+                      <button
+                        className="unanswered-btn"
+                        onClick={() => selectCategoryUnanswered(category)}
+                      >
+                        <FaQuestionCircle /> 未回答 {unansweredCount}問
+                      </button>
+                    ) : (
+                      <div className="all-answered">
+                        <FaCheckCircle /> 全問回答済
+                      </div>
+                    )}
+                    {wrongCount > 0 && (
+                      <button
+                        className="wrong-btn"
+                        onClick={() => startCategoryWrongQuestions(category)}
+                      >
+                        <FaRedo /> 復習 {wrongCount}問
+                      </button>
+                    )}
+                  </div>
                 </div>
               )
             })}
