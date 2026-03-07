@@ -50,6 +50,170 @@
   color: #5A6B7A;
 }
 
+/* ヘルプボタン */
+.help-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #7CB8C9;
+  color: #4A6670;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.help-btn:hover {
+  background: #7CB8C9;
+  color: white;
+  transform: scale(1.1);
+}
+
+.header {
+  position: relative;
+}
+
+/* モーダル */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  max-width: 400px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h2 {
+  margin: 0 0 1rem;
+  color: #4A6670;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ヘルプモーダル */
+.help-modal {
+  max-width: 450px;
+}
+
+.help-content {
+  margin-bottom: 1rem;
+}
+
+.help-item {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.8rem;
+}
+
+.help-item h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  color: #1A6B8A;
+}
+
+.help-item p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.5;
+}
+
+.modal-close-btn {
+  width: 100%;
+  padding: 0.8rem;
+  background: linear-gradient(135deg, #A8D5E5 0%, #B8E0D2 100%);
+  color: #4A6670;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* 続きからモーダル */
+.continue-modal {
+  text-align: center;
+}
+
+.continue-info {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.continue-buttons {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.continue-btn {
+  flex: 1;
+  padding: 1rem;
+  background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.restart-btn {
+  flex: 1;
+  padding: 1rem;
+  background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.modal-cancel-btn {
+  width: 100%;
+  padding: 0.6rem;
+  background: #f0f0f0;
+  color: #666;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
 /* メイン */
 .main {
   flex: 1;

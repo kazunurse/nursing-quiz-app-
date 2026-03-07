@@ -122,6 +122,9 @@ function App() {
   const [wrongAnswers, setWrongAnswers] = useState([])
   const [answeredQuestions, setAnsweredQuestions] = useState([])  // 回答済み問題ID
   const [categoryProgress, setCategoryProgress] = useState({})  // カテゴリーごとの進捗
+  const [showContinueModal, setShowContinueModal] = useState(false)  // 続きから/最初からモーダル
+  const [pendingCategory, setPendingCategory] = useState(null)  // モーダル表示中のカテゴリー
+  const [showHelp, setShowHelp] = useState(false)  // ヘルプモーダル
 
   // データと保存データを読み込み
   useEffect(() => {
@@ -194,22 +197,48 @@ function App() {
 
   // カテゴリー選択（全問題）
   const selectCategory = (category) => {
+    const savedIndex = categoryProgress[category.name] || 0
     const questions = data.questions.filter(q => q.category === category.name)
-    // シャッフルせず順番に出題（進捗を保存するため）
+
+    // 進捗があり、有効な位置なら選択モーダルを表示
+    if (savedIndex > 0 && savedIndex < questions.length) {
+      setPendingCategory(category)
+      setShowContinueModal(true)
+      return
+    }
+
+    // 進捗がない場合は最初から開始
+    startCategoryQuiz(category, 0)
+  }
+
+  // カテゴリークイズを開始（指定位置から）
+  const startCategoryQuiz = (category, startIndex) => {
+    const questions = data.questions.filter(q => q.category === category.name)
     setQuizQuestions(questions)
     setSelectedCategory(category)
-
-    // 保存された進捗があればその位置から開始
-    const savedIndex = categoryProgress[category.name] || 0
-    // 保存位置が問題数を超えていたら最初から
-    const startIndex = savedIndex < questions.length ? savedIndex : 0
     setCurrentQuestionIndex(startIndex)
-
     setScore(0)
     setAnswers([])
     setSelectedAnswers([])
     setShowExplanation(false)
+    setShowContinueModal(false)
+    setPendingCategory(null)
     setScreen('quiz')
+  }
+
+  // 続きから開始
+  const continueFromProgress = () => {
+    if (!pendingCategory) return
+    const savedIndex = categoryProgress[pendingCategory.name] || 0
+    startCategoryQuiz(pendingCategory, savedIndex)
+  }
+
+  // 最初から開始
+  const startFromBeginning = () => {
+    if (!pendingCategory) return
+    // 進捗をクリア
+    clearCategoryProgress(pendingCategory.name)
+    startCategoryQuiz(pendingCategory, 0)
   }
 
   // カテゴリー選択（未回答のみ）
@@ -462,10 +491,70 @@ function App() {
     return (
       <div className="app">
         <header className="header">
+          <button className="help-btn" onClick={() => setShowHelp(true)}>
+            <FaQuestionCircle />
+          </button>
           <img src="/hero.png" alt="看護師国家試験対策" className="hero-image" />
           <h1><FaGraduationCap className="title-icon" /> 看護師国家試験アプリ</h1>
           <p className="subtitle">かずからの挑戦状</p>
         </header>
+
+        {/* ヘルプモーダル */}
+        {showHelp && (
+          <div className="modal-overlay" onClick={() => setShowHelp(false)}>
+            <div className="modal-content help-modal" onClick={e => e.stopPropagation()}>
+              <h2><FaQuestionCircle /> 使い方</h2>
+              <div className="help-content">
+                <div className="help-item">
+                  <h3>カテゴリー別クイズ</h3>
+                  <p>カテゴリーを選んで問題に挑戦。進捗は自動保存されます。</p>
+                </div>
+                <div className="help-item">
+                  <h3>未回答のみ</h3>
+                  <p>まだ解いていない問題だけをピックアップして出題します。</p>
+                </div>
+                <div className="help-item">
+                  <h3>復習（赤ボタン）</h3>
+                  <p>間違えた問題だけを復習できます。正解すると復習リストから消えます。</p>
+                </div>
+                <div className="help-item">
+                  <h3>一時保存</h3>
+                  <p>解説画面で「一時保存」を押すと、次回は続きから再開できます。</p>
+                </div>
+                <div className="help-item">
+                  <h3>複数選択問題</h3>
+                  <p>「2つ選べ」などの問題は、必要な数を選んでから「回答を確定」を押してください。</p>
+                </div>
+              </div>
+              <button className="modal-close-btn" onClick={() => setShowHelp(false)}>
+                閉じる
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* 続きから/最初からモーダル */}
+        {showContinueModal && pendingCategory && (
+          <div className="modal-overlay" onClick={() => setShowContinueModal(false)}>
+            <div className="modal-content continue-modal" onClick={e => e.stopPropagation()}>
+              <h2>{pendingCategory.name}</h2>
+              <p className="continue-info">
+                前回の続き（{categoryProgress[pendingCategory.name] + 1}問目〜）がありますs
+              </p>
+              <div className="continue-buttons">
+                <button className="continue-btn" onClick={continueFromProgress}>
+                  <FaPlayCircle /> 続きから
+                </button>
+                <button className="restart-btn" onClick={startFromBeginning}>
+                  <FaRedo /> 最初から
+                </button>
+              </div>
+              <button className="modal-cancel-btn" onClick={() => setShowContinueModal(false)}>
+                キャンセル
+              </button>
+            </div>
+          </div>
+        )}
 
         <main className="main">
           {/* 学習統計 */}
