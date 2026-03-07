@@ -547,6 +547,11 @@ function App() {
               <h3 className={selectedAnswer === question.answer ? 'correct-title' : 'incorrect-title'}>
                 {selectedAnswer === question.answer ? <><FaCheckCircle /> 正解！</> : <><FaTimesCircle /> 不正解</>}
               </h3>
+              <div className="correct-answer-box">
+                <span className="correct-answer-label">正解</span>
+                <span className="correct-answer-number">{question.answer + 1}</span>
+                <span className="correct-answer-text">{question.choices[question.answer]}</span>
+              </div>
               <p>{question.explanation}</p>
               <button className="next-btn" onClick={nextQuestion}>
                 {currentQuestionIndex < quizQuestions.length - 1 ? <>次の問題へ <FaArrowRight /></> : <>結果を見る <FaTrophy /></>}

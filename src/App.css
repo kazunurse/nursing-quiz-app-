@@ -398,6 +398,41 @@
   color: #f44336;
 }
 
+/* 正解表示ボックス */
+.correct-answer-box {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  border: 2px solid #4CAF50;
+}
+
+.correct-answer-label {
+  background: #4CAF50;
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.correct-answer-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #2E7D32;
+  min-width: 2.5rem;
+  text-align: center;
+}
+
+.correct-answer-text {
+  flex: 1;
+  color: #1B5E20;
+  font-weight: 500;
+}
+
 .explanation p {
   color: #555;
   line-height: 1.8;
