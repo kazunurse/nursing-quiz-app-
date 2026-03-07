@@ -66,6 +66,74 @@
   margin: 1.5rem 0 1rem;
 }
 
+/* 中断再開カード */
+.resume-card {
+  background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+  border: 2px solid #FF9800;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.resume-info {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.resume-label {
+  background: #FF9800;
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.resume-category {
+  font-weight: bold;
+  color: #E65100;
+}
+
+.resume-progress {
+  color: #F57C00;
+  font-size: 0.9rem;
+}
+
+.resume-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.resume-btn {
+  flex: 1;
+  padding: 0.8rem;
+  font-size: 1rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.resume-btn:hover {
+  transform: translateY(-2px);
+}
+
+.resume-cancel-btn {
+  padding: 0.8rem 1rem;
+  font-size: 0.9rem;
+  background: white;
+  color: #666;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
 /* チャレンジボタンエリア */
 .challenge-buttons {
   display: flex;
@@ -146,6 +214,7 @@
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s;
+  min-height: 140px;
 }
 
 .category-btn:hover {
@@ -172,13 +241,28 @@
   font-weight: bold;
   color: #333;
   text-align: center;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
+  word-break: keep-all;
+  line-height: 1.3;
 }
 
 .category-count {
   font-size: 0.85rem;
   color: #666;
   margin-top: 0.3rem;
+}
+
+.category-progress-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
 }
 
 /* カテゴリーカード（ボタン+未回答） */
@@ -312,6 +396,17 @@
   margin: 0;
 }
 
+.multi-select-hint {
+  margin-top: 1rem;
+  padding: 0.6rem 1rem;
+  background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+  border-radius: 8px;
+  color: #E65100;
+  font-weight: bold;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
 /* 選択肢 */
 .choices {
   display: flex;
@@ -348,6 +443,12 @@
 .choice-btn.incorrect {
   border-color: #f44336;
   background: #FFEBEE;
+}
+
+.choice-btn.selected {
+  border-color: #FF9800;
+  background: #FFF3E0;
+  box-shadow: 0 0 0 2px #FF9800;
 }
 
 .choice-number {
@@ -401,7 +502,8 @@
 /* 正解表示ボックス */
 .correct-answer-box {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  align-items: flex-start;
   gap: 0.8rem;
   background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
   padding: 1rem;
@@ -419,16 +521,25 @@
   font-size: 0.85rem;
 }
 
+.correct-answer-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #81C784;
+}
+
 .correct-answer-number {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: bold;
   color: #2E7D32;
-  min-width: 2.5rem;
+  min-width: 1.8rem;
   text-align: center;
 }
 
 .correct-answer-text {
-  flex: 1;
   color: #1B5E20;
   font-weight: 500;
 }
@@ -444,8 +555,13 @@
   border-left: 4px solid #A8D5E5;
 }
 
+.explanation-actions {
+  display: flex;
+  gap: 0.8rem;
+}
+
 .next-btn {
-  width: 100%;
+  flex: 1;
   padding: 1rem;
   font-size: 1.1rem;
   font-weight: bold;
@@ -460,6 +576,48 @@
 .next-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(168, 213, 229, 0.5);
+}
+
+.save-btn {
+  padding: 1rem;
+  font-size: 0.95rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #FFE0B2 0%, #FFCC80 100%);
+  color: #E65100;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+}
+
+.save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+}
+
+/* 複数選択確定ボタン */
+.confirm-btn {
+  width: 100%;
+  padding: 1rem;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.confirm-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
 }
 
 /* 結果画面 */

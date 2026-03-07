@@ -8,7 +8,8 @@ import {
   FaTrash, FaQuestionCircle, FaGraduationCap, FaChartLine,
   FaEye, FaHandHoldingMedical, FaShieldVirus, FaBaby,
   FaCut, FaRibbon, FaBalanceScale, FaAppleAlt, FaRunning,
-  FaAllergies, FaBacteria, FaTint, FaThermometerHalf
+  FaAllergies, FaBacteria, FaTint, FaThermometerHalf,
+  FaPlayCircle, FaSave
 } from 'react-icons/fa'
 import { GiKidneys, GiStomach, GiMedicines, GiNurseFemale, GiSkeletonInside } from 'react-icons/gi'
 import { MdQuiz, MdPlayArrow, MdBloodtype, MdOutlineElderly } from 'react-icons/md'
@@ -83,7 +84,8 @@ const STORAGE_KEYS = {
   HISTORY: 'nursing-quiz-history',
   WRONG_ANSWERS: 'nursing-quiz-wrong',
   STATS: 'nursing-quiz-stats',
-  ANSWERED: 'nursing-quiz-answered'  // 回答済み問題
+  ANSWERED: 'nursing-quiz-answered',  // 回答済み問題
+  CATEGORY_PROGRESS: 'nursing-quiz-category-progress'  // カテゴリーごとの進捗 { "脳神経系": 2 }
 }
 
 // ローカルストレージ操作
@@ -110,7 +112,7 @@ function App() {
   const [screen, setScreen] = useState('home') // home, category, quiz, result, history, wrong
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [selectedAnswer, setSelectedAnswer] = useState(null)
+  const [selectedAnswers, setSelectedAnswers] = useState([])  // 複数選択対応
   const [showExplanation, setShowExplanation] = useState(false)
   const [score, setScore] = useState(0)
   const [answers, setAnswers] = useState([])
@@ -119,6 +121,7 @@ function App() {
   const [history, setHistory] = useState([])
   const [wrongAnswers, setWrongAnswers] = useState([])
   const [answeredQuestions, setAnsweredQuestions] = useState([])  // 回答済み問題ID
+  const [categoryProgress, setCategoryProgress] = useState({})  // カテゴリーごとの進捗
 
   // データと保存データを読み込み
   useEffect(() => {
@@ -132,11 +135,13 @@ function App() {
     const savedHistory = storage.get(STORAGE_KEYS.HISTORY)
     const savedWrong = storage.get(STORAGE_KEYS.WRONG_ANSWERS)
     const savedAnswered = storage.get(STORAGE_KEYS.ANSWERED)
+    const savedCategoryProgress = storage.get(STORAGE_KEYS.CATEGORY_PROGRESS)
 
     if (savedStats) setStats(savedStats)
     if (savedHistory) setHistory(savedHistory)
     if (savedWrong) setWrongAnswers(savedWrong)
     if (savedAnswered) setAnsweredQuestions(savedAnswered)
+    if (savedCategoryProgress) setCategoryProgress(savedCategoryProgress)
   }, [])
 
   // 結果を保存
@@ -190,12 +195,19 @@ function App() {
   // カテゴリー選択（全問題）
   const selectCategory = (category) => {
     const questions = data.questions.filter(q => q.category === category.name)
-    setQuizQuestions(questions.sort(() => Math.random() - 0.5))
+    // シャッフルせず順番に出題（進捗を保存するため）
+    setQuizQuestions(questions)
     setSelectedCategory(category)
-    setCurrentQuestionIndex(0)
+
+    // 保存された進捗があればその位置から開始
+    const savedIndex = categoryProgress[category.name] || 0
+    // 保存位置が問題数を超えていたら最初から
+    const startIndex = savedIndex < questions.length ? savedIndex : 0
+    setCurrentQuestionIndex(startIndex)
+
     setScore(0)
     setAnswers([])
-    setSelectedAnswer(null)
+    setSelectedAnswers([])
     setShowExplanation(false)
     setScreen('quiz')
   }
@@ -214,7 +226,7 @@ function App() {
     setCurrentQuestionIndex(0)
     setScore(0)
     setAnswers([])
-    setSelectedAnswer(null)
+    setSelectedAnswers([])
     setShowExplanation(false)
     setScreen('quiz')
   }
@@ -233,7 +245,7 @@ function App() {
     setCurrentQuestionIndex(0)
     setScore(0)
     setAnswers([])
-    setSelectedAnswer(null)
+    setSelectedAnswers([])
     setShowExplanation(false)
     setScreen('quiz')
   }
@@ -250,7 +262,7 @@ function App() {
     setCurrentQuestionIndex(0)
     setScore(0)
     setAnswers([])
-    setSelectedAnswer(null)
+    setSelectedAnswers([])
     setShowExplanation(false)
     setScreen('quiz')
   }
@@ -267,33 +279,72 @@ function App() {
     setCurrentQuestionIndex(0)
     setScore(0)
     setAnswers([])
-    setSelectedAnswer(null)
+    setSelectedAnswers([])
     setShowExplanation(false)
     setScreen('quiz')
   }
 
+  // 問題が複数選択かどうか判定
+  const isMultipleChoice = (question) => Array.isArray(question.answer)
+
+  // 必要な選択数を取得
+  const getRequiredCount = (question) => {
+    if (Array.isArray(question.answer)) {
+      return question.answer.length
+    }
+    return 1
+  }
+
   // 回答を選択
   const handleAnswer = (index) => {
-    if (selectedAnswer !== null) return
-
-    setSelectedAnswer(index)
-    setShowExplanation(true)
+    if (showExplanation) return  // 確定後は選択不可
 
     const currentQuestion = quizQuestions[currentQuestionIndex]
-    const isCorrect = index === currentQuestion.answer
+
+    if (isMultipleChoice(currentQuestion)) {
+      // 複数選択モード
+      const requiredCount = getRequiredCount(currentQuestion)
+      if (selectedAnswers.includes(index)) {
+        // 選択解除
+        setSelectedAnswers(selectedAnswers.filter(i => i !== index))
+      } else if (selectedAnswers.length < requiredCount) {
+        // 新しく選択
+        setSelectedAnswers([...selectedAnswers, index])
+      }
+    } else {
+      // 単一選択モード（即座に確定）
+      setSelectedAnswers([index])
+      confirmAnswer([index], currentQuestion)
+    }
+  }
+
+  // 回答を確定（複数選択用）
+  const confirmAnswer = (selected = selectedAnswers, question = quizQuestions[currentQuestionIndex]) => {
+    setShowExplanation(true)
+
+    let isCorrect
+    if (isMultipleChoice(question)) {
+      // 複数選択：全て一致しているかチェック
+      const correctSet = new Set(question.answer)
+      const selectedSet = new Set(selected)
+      isCorrect = correctSet.size === selectedSet.size &&
+        [...correctSet].every(v => selectedSet.has(v))
+    } else {
+      // 単一選択
+      isCorrect = selected[0] === question.answer
+    }
 
     if (isCorrect) {
       setScore(score + 1)
-      // 正解したら間違えた問題リストから削除
-      if (wrongAnswers.includes(currentQuestion.id)) {
-        removeFromWrong(currentQuestion.id)
+      if (wrongAnswers.includes(question.id)) {
+        removeFromWrong(question.id)
       }
     }
 
     setAnswers([...answers, {
-      questionId: currentQuestion.id,
-      selected: index,
-      correct: currentQuestion.answer,
+      questionId: question.id,
+      selected: selected,
+      correct: question.answer,
       isCorrect
     }])
   }
@@ -302,21 +353,50 @@ function App() {
   const nextQuestion = () => {
     if (currentQuestionIndex < quizQuestions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1)
-      setSelectedAnswer(null)
+      setSelectedAnswers([])
       setShowExplanation(false)
     } else {
       // 結果を保存
       const wrongIds = answers.filter(a => !a.isCorrect).map(a => a.questionId)
       saveResult(selectedCategory.name, score, quizQuestions.length, wrongIds)
+      // カテゴリー進捗をクリア（完了したので）
+      const categoryName = selectedCategory.name.replace(/（.*）$/, '')
+      clearCategoryProgress(categoryName)
       setScreen('result')
     }
   }
 
-  // ホームに戻る
+  // ホームに戻る（保存せず）
   const goHome = () => {
     setScreen('home')
     setSelectedCategory(null)
     setQuizQuestions([])
+  }
+
+  // 一時保存してホームに戻る
+  const saveAndGoHome = () => {
+    // カテゴリー名を取得（「（未回答）」などの接尾辞を除去）
+    const categoryName = selectedCategory.name.replace(/（.*）$/, '')
+
+    // 次の問題のインデックスを保存
+    const newProgress = {
+      ...categoryProgress,
+      [categoryName]: currentQuestionIndex + 1
+    }
+    setCategoryProgress(newProgress)
+    storage.set(STORAGE_KEYS.CATEGORY_PROGRESS, newProgress)
+
+    setScreen('home')
+    setSelectedCategory(null)
+    setQuizQuestions([])
+  }
+
+  // カテゴリーの進捗をクリア
+  const clearCategoryProgress = (categoryName) => {
+    const newProgress = { ...categoryProgress }
+    delete newProgress[categoryName]
+    setCategoryProgress(newProgress)
+    storage.set(STORAGE_KEYS.CATEGORY_PROGRESS, newProgress)
   }
 
   // データリセット
@@ -326,10 +406,12 @@ function App() {
       localStorage.removeItem(STORAGE_KEYS.WRONG_ANSWERS)
       localStorage.removeItem(STORAGE_KEYS.STATS)
       localStorage.removeItem(STORAGE_KEYS.ANSWERED)
+      localStorage.removeItem(STORAGE_KEYS.CATEGORY_PROGRESS)
       setStats({ totalQuizzes: 0, totalCorrect: 0, totalQuestions: 0 })
       setHistory([])
       setWrongAnswers([])
       setAnsweredQuestions([])
+      setCategoryProgress({})
     }
   }
 
@@ -399,6 +481,8 @@ function App() {
               const IconComponent = getCategoryIcon(category.name)
               const unansweredCount = getUnansweredCount(category.name)
               const allAnswered = unansweredCount === 0
+              const savedIndex = categoryProgress[category.name] || 0
+              const hasProgress = savedIndex > 0
               return (
                 <div key={category.id} className="category-card">
                   <button
@@ -410,6 +494,11 @@ function App() {
                     </div>
                     <span className="category-name">{category.name}</span>
                     <span className="category-count">{category.questionCount}問</span>
+                    {hasProgress && (
+                      <span className="category-progress-badge">
+                        <FaPlayCircle /> {savedIndex + 1}問目から
+                      </span>
+                    )}
                   </button>
                   {!allAnswered ? (
                     <button
@@ -491,6 +580,20 @@ function App() {
   // クイズ画面
   if (screen === 'quiz') {
     const question = quizQuestions[currentQuestionIndex]
+    const isMulti = isMultipleChoice(question)
+    const requiredCount = getRequiredCount(question)
+    const correctAnswers = isMulti ? question.answer : [question.answer]
+
+    // 正誤判定
+    const checkIsCorrect = () => {
+      if (isMulti) {
+        const correctSet = new Set(question.answer)
+        const selectedSet = new Set(selectedAnswers)
+        return correctSet.size === selectedSet.size &&
+          [...correctSet].every(v => selectedSet.has(v))
+      }
+      return selectedAnswers[0] === question.answer
+    }
 
     return (
       <div className="app">
@@ -515,17 +618,27 @@ function App() {
 
           <div className="question-card">
             <p className="question-text">{question.question}</p>
+            {isMulti && !showExplanation && (
+              <p className="multi-select-hint">
+                {requiredCount}つ選んでください（{selectedAnswers.length}/{requiredCount}）
+              </p>
+            )}
           </div>
 
           <div className="choices">
             {question.choices.map((choice, index) => {
               let className = 'choice-btn'
-              if (selectedAnswer !== null) {
-                if (index === question.answer) {
+
+              if (showExplanation) {
+                // 解説表示時：正解と不正解を表示
+                if (correctAnswers.includes(index)) {
                   className += ' correct'
-                } else if (index === selectedAnswer) {
+                } else if (selectedAnswers.includes(index)) {
                   className += ' incorrect'
                 }
+              } else if (selectedAnswers.includes(index)) {
+                // 選択中
+                className += ' selected'
               }
 
               return (
@@ -533,7 +646,7 @@ function App() {
                   key={index}
                   className={className}
                   onClick={() => handleAnswer(index)}
-                  disabled={selectedAnswer !== null}
+                  disabled={showExplanation}
                 >
                   <span className="choice-number">{index + 1}</span>
                   <span className="choice-text">{choice}</span>
@@ -542,20 +655,38 @@ function App() {
             })}
           </div>
 
+          {/* 複数選択時の確定ボタン */}
+          {isMulti && !showExplanation && selectedAnswers.length === requiredCount && (
+            <button className="confirm-btn" onClick={() => confirmAnswer()}>
+              <FaCheckCircle /> 回答を確定
+            </button>
+          )}
+
           {showExplanation && (
             <div className="explanation">
-              <h3 className={selectedAnswer === question.answer ? 'correct-title' : 'incorrect-title'}>
-                {selectedAnswer === question.answer ? <><FaCheckCircle /> 正解！</> : <><FaTimesCircle /> 不正解</>}
+              <h3 className={checkIsCorrect() ? 'correct-title' : 'incorrect-title'}>
+                {checkIsCorrect() ? <><FaCheckCircle /> 正解！</> : <><FaTimesCircle /> 不正解</>}
               </h3>
               <div className="correct-answer-box">
                 <span className="correct-answer-label">正解</span>
-                <span className="correct-answer-number">{question.answer + 1}</span>
-                <span className="correct-answer-text">{question.choices[question.answer]}</span>
+                {correctAnswers.map((ans, i) => (
+                  <span key={i} className="correct-answer-item">
+                    <span className="correct-answer-number">{ans + 1}</span>
+                    <span className="correct-answer-text">{question.choices[ans]}</span>
+                  </span>
+                ))}
               </div>
               <p>{question.explanation}</p>
-              <button className="next-btn" onClick={nextQuestion}>
-                {currentQuestionIndex < quizQuestions.length - 1 ? <>次の問題へ <FaArrowRight /></> : <>結果を見る <FaTrophy /></>}
-              </button>
+              <div className="explanation-actions">
+                <button className="next-btn" onClick={nextQuestion}>
+                  {currentQuestionIndex < quizQuestions.length - 1 ? <>次の問題へ <FaArrowRight /></> : <>結果を見る <FaTrophy /></>}
+                </button>
+                {currentQuestionIndex < quizQuestions.length - 1 && (
+                  <button className="save-btn" onClick={saveAndGoHome}>
+                    <FaSave /> 一時保存
+                  </button>
+                )}
+              </div>
             </div>
           )}
         </main>
@@ -615,7 +746,7 @@ function App() {
               setCurrentQuestionIndex(0)
               setScore(0)
               setAnswers([])
-              setSelectedAnswer(null)
+              setSelectedAnswers([])
               setShowExplanation(false)
               setScreen('quiz')
             }}>

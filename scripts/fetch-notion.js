@@ -115,9 +115,17 @@ async function getQuestionsFromDatabase(databaseId, categoryName) {
       const questionText = props['問題文']?.rich_text?.[0]?.plain_text || '';
       const { question, choices } = parseQuestion(questionText);
 
-      // 正解を取得
+      // 正解を取得（複数回答対応: "1, 2" → [0, 1]）
       const answerText = props['正解']?.rich_text?.[0]?.plain_text || '';
-      const answer = parseInt(answerText) - 1;
+      let answer;
+      if (answerText.includes(',')) {
+        // カンマ区切りの場合は配列として処理
+        answer = answerText.split(',').map(s => parseInt(s.trim()) - 1).filter(n => !isNaN(n));
+      } else {
+        // 単一回答の場合は数値
+        answer = parseInt(answerText) - 1;
+        if (isNaN(answer)) answer = 0;
+      }
 
       // 解説を取得
       const explanation = props['解説']?.rich_text?.[0]?.plain_text || '';
@@ -131,7 +139,7 @@ async function getQuestionsFromDatabase(databaseId, categoryName) {
           category: categoryName,
           question,
           choices,
-          answer: isNaN(answer) ? 0 : answer,
+          answer,
           explanation,
           tags
         });
