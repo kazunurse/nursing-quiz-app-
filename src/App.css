@@ -17,37 +17,25 @@
 /* ヘッダー */
 .header {
   text-align: center;
-  padding: 2rem 1rem;
-  background: linear-gradient(135deg, #7CB8C9 0%, #A8D5E5 50%, #F5E6D3 100%);
+  padding: 1rem 1rem 1.5rem;
+  background: #f8f9fa;
   color: #4A5568;
 }
 
 .hero-image {
   max-width: 100%;
   height: auto;
-  max-height: 120px;
-  margin-bottom: 1rem;
-  border-radius: 8px;
+  max-height: 200px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
 
-.header h1 {
-  margin: 0;
-  font-size: 1.8rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.title-icon {
-  font-size: 1.5rem;
-}
-
-.subtitle {
-  margin: 0.5rem 0 0;
-  opacity: 0.85;
-  font-size: 1.1rem;
-  color: #5A6B7A;
+.app-name {
+  margin: 0.8rem 0 0;
+  font-size: 0.85rem;
+  color: #7CB8C9;
+  font-weight: bold;
+  letter-spacing: 0.1em;
 }
 
 /* ヘルプボタン（メイン） */

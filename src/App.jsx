@@ -491,9 +491,8 @@ function App() {
     return (
       <div className="app">
         <header className="header">
-          <img src="/hero.png" alt="看護師国家試験対策" className="hero-image" />
-          <h1><FaGraduationCap className="title-icon" /> 看護師国家試験アプリ</h1>
-          <p className="subtitle">かずからの挑戦状</p>
+          <img src="/hero.png" alt="看護師国家試験対策 - かず学長の挑戦状" className="hero-image" />
+          <p className="app-name">Nurse Path+</p>
           <button className="help-btn-main" onClick={() => setShowHelp(true)}>
             <FaQuestionCircle /> 使い方
           </button>
