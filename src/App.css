@@ -729,6 +729,82 @@
   border-left: 4px solid #A8D5E5;
 }
 
+/* 解説メモカード */
+.explanation-memo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+}
+
+.memo-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  background: white;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  flex-wrap: wrap;
+}
+
+.memo-correct {
+  border-left: 4px solid #4CAF50;
+}
+
+.memo-wrong {
+  border-left: 4px solid #ccc;
+}
+
+.memo-num {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #666;
+  min-width: 1.2rem;
+}
+
+.memo-choice {
+  color: #333;
+  flex: 1;
+  min-width: 100px;
+}
+
+.memo-arrow {
+  color: #aaa;
+  font-size: 0.85rem;
+}
+
+.memo-mark {
+  font-weight: bold;
+  font-size: 1rem;
+  min-width: 1.2rem;
+}
+
+.memo-correct .memo-mark {
+  color: #4CAF50;
+}
+
+.memo-wrong .memo-mark {
+  color: #999;
+}
+
+.memo-reason {
+  color: #555;
+  flex: 2;
+  min-width: 120px;
+}
+
+.memo-note {
+  color: #555;
+  line-height: 1.8;
+  background: white;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #A8D5E5;
+  font-size: 0.92rem;
+}
+
 .explanation-actions {
   display: flex;
   gap: 0.8rem;

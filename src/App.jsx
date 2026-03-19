@@ -721,6 +721,34 @@ function App() {
     const requiredCount = getRequiredCount(question)
     const correctAnswers = isMulti ? question.answer : [question.answer]
 
+    // 解説をメモカード形式でレンダリング
+    const renderExplanation = (text) => {
+      if (!text) return null
+      const lines = text.split('\n').filter(l => l.trim())
+      const items = lines.map((line, i) => {
+        // "1.選択肢テキスト → ○/× 理由" 形式を解析
+        const match = line.match(/^(\d+)\.(.*?)\s*→\s*([○×])\s*(.*)$/)
+        if (match) {
+          const [, num, choice, mark, reason] = match
+          const isCorrect = mark === '○'
+          return (
+            <div key={i} className={`memo-item ${isCorrect ? 'memo-correct' : 'memo-wrong'}`}>
+              <span className="memo-num">{num}</span>
+              <span className="memo-choice">{choice.trim()}</span>
+              <span className="memo-arrow">→</span>
+              <span className="memo-mark">{mark}</span>
+              <span className="memo-reason">{reason}</span>
+            </div>
+          )
+        }
+        // パターン非マッチの行はそのまま表示
+        return (
+          <div key={i} className="memo-note">{line}</div>
+        )
+      })
+      return <div className="explanation-memo">{items}</div>
+    }
+
     // 正誤判定
     const checkIsCorrect = () => {
       if (isMulti) {
@@ -813,7 +841,7 @@ function App() {
                   </span>
                 ))}
               </div>
-              <p>{question.explanation}</p>
+              {renderExplanation(question.explanation)}
               <div className="explanation-actions">
                 <button className="next-btn" onClick={nextQuestion}>
                   {currentQuestionIndex < quizQuestions.length - 1 ? <>次の問題へ <FaArrowRight /></> : <>結果を見る <FaTrophy /></>}
