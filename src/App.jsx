@@ -724,13 +724,14 @@ function App() {
     // 解説をメモカード形式でレンダリング
     const renderExplanation = (text) => {
       if (!text) return null
-      const cardPattern = /^(\d+)\.(.*?)\s*→\s*([○×])\s*(.*)$/m
-      // ○/× 形式の行が含まれている場合だけカード表示
-      if (cardPattern.test(text)) {
+      // 番号付き → 形式かどうか判定
+      const hasArrow = /^\d+[．.]\s*.+→/m.test(text)
+      if (hasArrow) {
         const items = text.split('\n').filter(l => l.trim()).map((line, i) => {
-          const match = line.match(/^(\d+)\.(.*?)\s*→\s*([○×])\s*(.*)$/)
-          if (match) {
-            const [, num, choice, mark, reason] = match
+          // ○/× あり
+          const matchMark = line.match(/^(\d+)[．.]\s*(.*?)\s*→\s*([○×])\s*(.*)$/)
+          if (matchMark) {
+            const [, num, choice, mark, reason] = matchMark
             const isCorrect = mark === '○'
             return (
               <div key={i} className={`memo-item ${isCorrect ? 'memo-correct' : 'memo-wrong'}`}>
@@ -738,6 +739,19 @@ function App() {
                 <span className="memo-choice">{choice.trim()}</span>
                 <span className="memo-arrow">→</span>
                 <span className="memo-mark">{mark}</span>
+                <span className="memo-reason">{reason}</span>
+              </div>
+            )
+          }
+          // ○/× なし（→ 理由のみ）
+          const matchArrow = line.match(/^(\d+)[．.]\s*(.*?)\s*→\s*(.+)$/)
+          if (matchArrow) {
+            const [, num, choice, reason] = matchArrow
+            return (
+              <div key={i} className="memo-item memo-neutral">
+                <span className="memo-num">{num}</span>
+                <span className="memo-choice">{choice.trim()}</span>
+                <span className="memo-arrow">→</span>
                 <span className="memo-reason">{reason}</span>
               </div>
             )

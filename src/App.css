@@ -805,6 +805,10 @@
   line-height: 1.7;
 }
 
+.memo-neutral {
+  border-left: 4px solid #A8D5E5;
+}
+
 .memo-note {
   color: #555;
   line-height: 1.8;
@@ -813,6 +817,7 @@
   border-radius: 8px;
   border-left: 4px solid #A8D5E5;
   font-size: 0.92rem;
+  white-space: pre-wrap;
 }
 
 .explanation-actions {
