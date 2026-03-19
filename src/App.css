@@ -795,6 +795,16 @@
   min-width: 120px;
 }
 
+.memo-subs {
+  width: 100%;
+  margin: 0.3rem 0 0;
+  padding-left: 1rem;
+  list-style: disc;
+  color: #555;
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+
 .memo-note {
   color: #555;
   line-height: 1.8;

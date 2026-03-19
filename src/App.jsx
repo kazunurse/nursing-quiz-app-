@@ -724,10 +724,29 @@ function App() {
     // 解説をメモカード形式でレンダリング
     const renderExplanation = (text) => {
       if (!text) return null
-      const lines = text.split('\n').filter(l => l.trim())
-      const items = lines.map((line, i) => {
-        // "1.選択肢テキスト → ○/× 理由" 形式を解析
-        const match = line.match(/^(\d+)\.(.*?)\s*→\s*([○×])\s*(.*)$/)
+      // まず行をブロック（番号付き）に束ねる
+      const blocks = []
+      let current = null
+      for (const line of text.split('\n')) {
+        if (!line.trim()) continue
+        if (/^\d+[\.。]/.test(line)) {
+          if (current) blocks.push(current)
+          current = { head: line, subs: [] }
+        } else if (current && line.trim().startsWith('・')) {
+          current.subs.push(line.trim())
+        } else {
+          if (current) { blocks.push(current); current = null }
+          blocks.push({ head: line, subs: [], isNote: true })
+        }
+      }
+      if (current) blocks.push(current)
+
+      const items = blocks.map((block, i) => {
+        if (block.isNote) {
+          return <div key={i} className="memo-note">{block.head}</div>
+        }
+        // "1.選択肢 → ○/× 理由" 形式
+        const match = block.head.match(/^(\d+)\.(.*?)\s*→\s*([○×])\s*(.*)$/)
         if (match) {
           const [, num, choice, mark, reason] = match
           const isCorrect = mark === '○'
@@ -738,12 +757,24 @@ function App() {
               <span className="memo-arrow">→</span>
               <span className="memo-mark">{mark}</span>
               <span className="memo-reason">{reason}</span>
+              {block.subs.length > 0 && (
+                <ul className="memo-subs">
+                  {block.subs.map((s, j) => <li key={j}>{s.replace(/^・/, '')}</li>)}
+                </ul>
+              )}
             </div>
           )
         }
-        // パターン非マッチの行はそのまま表示
+        // 番号付きだが→形式でない（本文 + ・箇条書き）
         return (
-          <div key={i} className="memo-note">{line}</div>
+          <div key={i} className="memo-note">
+            <div>{block.head}</div>
+            {block.subs.length > 0 && (
+              <ul className="memo-subs">
+                {block.subs.map((s, j) => <li key={j}>{s.replace(/^・/, '')}</li>)}
+              </ul>
+            )}
+          </div>
         )
       })
       return <div className="explanation-memo">{items}</div>
