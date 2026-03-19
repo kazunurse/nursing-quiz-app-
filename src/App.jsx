@@ -724,60 +724,30 @@ function App() {
     // 解説をメモカード形式でレンダリング
     const renderExplanation = (text) => {
       if (!text) return null
-      // まず行をブロック（番号付き）に束ねる
-      const blocks = []
-      let current = null
-      for (const line of text.split('\n')) {
-        if (!line.trim()) continue
-        if (/^\d+[\.。]/.test(line)) {
-          if (current) blocks.push(current)
-          current = { head: line, subs: [] }
-        } else if (current && line.trim().startsWith('・')) {
-          current.subs.push(line.trim())
-        } else {
-          if (current) { blocks.push(current); current = null }
-          blocks.push({ head: line, subs: [], isNote: true })
-        }
+      const cardPattern = /^(\d+)\.(.*?)\s*→\s*([○×])\s*(.*)$/m
+      // ○/× 形式の行が含まれている場合だけカード表示
+      if (cardPattern.test(text)) {
+        const items = text.split('\n').filter(l => l.trim()).map((line, i) => {
+          const match = line.match(/^(\d+)\.(.*?)\s*→\s*([○×])\s*(.*)$/)
+          if (match) {
+            const [, num, choice, mark, reason] = match
+            const isCorrect = mark === '○'
+            return (
+              <div key={i} className={`memo-item ${isCorrect ? 'memo-correct' : 'memo-wrong'}`}>
+                <span className="memo-num">{num}</span>
+                <span className="memo-choice">{choice.trim()}</span>
+                <span className="memo-arrow">→</span>
+                <span className="memo-mark">{mark}</span>
+                <span className="memo-reason">{reason}</span>
+              </div>
+            )
+          }
+          return <div key={i} className="memo-note">{line}</div>
+        })
+        return <div className="explanation-memo">{items}</div>
       }
-      if (current) blocks.push(current)
-
-      const items = blocks.map((block, i) => {
-        if (block.isNote) {
-          return <div key={i} className="memo-note">{block.head}</div>
-        }
-        // "1.選択肢 → ○/× 理由" 形式
-        const match = block.head.match(/^(\d+)\.(.*?)\s*→\s*([○×])\s*(.*)$/)
-        if (match) {
-          const [, num, choice, mark, reason] = match
-          const isCorrect = mark === '○'
-          return (
-            <div key={i} className={`memo-item ${isCorrect ? 'memo-correct' : 'memo-wrong'}`}>
-              <span className="memo-num">{num}</span>
-              <span className="memo-choice">{choice.trim()}</span>
-              <span className="memo-arrow">→</span>
-              <span className="memo-mark">{mark}</span>
-              <span className="memo-reason">{reason}</span>
-              {block.subs.length > 0 && (
-                <ul className="memo-subs">
-                  {block.subs.map((s, j) => <li key={j}>{s.replace(/^・/, '')}</li>)}
-                </ul>
-              )}
-            </div>
-          )
-        }
-        // 番号付きだが→形式でない（本文 + ・箇条書き）
-        return (
-          <div key={i} className="memo-note">
-            <div>{block.head}</div>
-            {block.subs.length > 0 && (
-              <ul className="memo-subs">
-                {block.subs.map((s, j) => <li key={j}>{s.replace(/^・/, '')}</li>)}
-              </ul>
-            )}
-          </div>
-        )
-      })
-      return <div className="explanation-memo">{items}</div>
+      // それ以外は全文をそのまま表示
+      return <div className="memo-note">{text}</div>
     }
 
     // 正誤判定
