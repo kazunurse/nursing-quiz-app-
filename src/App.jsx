@@ -488,6 +488,14 @@ function App() {
       ? Math.round((stats.totalCorrect / stats.totalQuestions) * 100)
       : 0
 
+    // 問題更新時に古いIDが残っても壊れないようフィルタリング
+    const validQuestionIds = new Set(data.questions.map(q => q.id))
+    const validAnsweredCount = answeredQuestions.filter(id => validQuestionIds.has(id)).length
+    const validWrongCount = wrongAnswers.filter(id => validQuestionIds.has(id)).length
+    const progressPercent = data.questions.length > 0
+      ? Math.round((validAnsweredCount / data.questions.length) * 100)
+      : 0
+
     return (
       <div className="app">
         <header className="header">
@@ -562,17 +570,15 @@ function App() {
             <div className="dashboard-progress">
               <div className="dashboard-progress-header">
                 <span className="dashboard-progress-label">回答済み</span>
-                <span className="dashboard-progress-value">{answeredQuestions.length} / {data.questions.length}問</span>
+                <span className="dashboard-progress-value">{validAnsweredCount} / {data.questions.length}問</span>
               </div>
               <div className="dashboard-progress-bar">
                 <div
                   className="dashboard-progress-fill"
-                  style={{ width: `${data.questions.length > 0 ? Math.round((answeredQuestions.length / data.questions.length) * 100) : 0}%` }}
+                  style={{ width: `${progressPercent}%` }}
                 />
               </div>
-              <div className="dashboard-progress-percent">
-                {data.questions.length > 0 ? Math.round((answeredQuestions.length / data.questions.length) * 100) : 0}%
-              </div>
+              <div className="dashboard-progress-percent">{progressPercent}%</div>
             </div>
             <div className="stats-grid">
               <div className="stat-item">
@@ -587,7 +593,7 @@ function App() {
               </div>
               <div className="stat-item">
                 <div className="stat-icon star"><FaStar /></div>
-                <span className="stat-number">{wrongAnswers.length}</span>
+                <span className="stat-number">{validWrongCount}</span>
                 <span className="stat-label">要復習</span>
               </div>
             </div>
