@@ -556,29 +556,42 @@ function App() {
         )}
 
         <main className="main">
-          {/* 学習統計 */}
-          {stats.totalQuizzes > 0 && (
-            <div className="stats-card">
-              <h3><FaChartLine className="section-icon" /> 学習の記録</h3>
-              <div className="stats-grid">
-                <div className="stat-item">
-                  <div className="stat-icon fire"><FaFire /></div>
-                  <span className="stat-number">{stats.totalQuizzes}</span>
-                  <span className="stat-label">回挑戦</span>
-                </div>
-                <div className="stat-item">
-                  <div className="stat-icon trophy"><FaTrophy /></div>
-                  <span className="stat-number">{overallPercentage}%</span>
-                  <span className="stat-label">正解率</span>
-                </div>
-                <div className="stat-item">
-                  <div className="stat-icon star"><FaStar /></div>
-                  <span className="stat-number">{wrongAnswers.length}</span>
-                  <span className="stat-label">要復習</span>
-                </div>
+          {/* ダッシュボード */}
+          <div className="stats-card">
+            <h3><FaChartLine className="section-icon" /> 学習ダッシュボード</h3>
+            <div className="dashboard-progress">
+              <div className="dashboard-progress-header">
+                <span className="dashboard-progress-label">回答済み</span>
+                <span className="dashboard-progress-value">{answeredQuestions.length} / {data.questions.length}問</span>
+              </div>
+              <div className="dashboard-progress-bar">
+                <div
+                  className="dashboard-progress-fill"
+                  style={{ width: `${data.questions.length > 0 ? Math.round((answeredQuestions.length / data.questions.length) * 100) : 0}%` }}
+                />
+              </div>
+              <div className="dashboard-progress-percent">
+                {data.questions.length > 0 ? Math.round((answeredQuestions.length / data.questions.length) * 100) : 0}%
               </div>
             </div>
-          )}
+            <div className="stats-grid">
+              <div className="stat-item">
+                <div className="stat-icon trophy"><FaTrophy /></div>
+                <span className="stat-number">{overallPercentage}%</span>
+                <span className="stat-label">正解率</span>
+              </div>
+              <div className="stat-item">
+                <div className="stat-icon fire"><FaFire /></div>
+                <span className="stat-number">{stats.totalQuizzes}</span>
+                <span className="stat-label">回挑戦</span>
+              </div>
+              <div className="stat-item">
+                <div className="stat-icon star"><FaStar /></div>
+                <span className="stat-number">{wrongAnswers.length}</span>
+                <span className="stat-label">要復習</span>
+              </div>
+            </div>
+          </div>
 
           <div className="challenge-buttons">
             <button className="all-challenge-btn" onClick={startAllQuestions}>

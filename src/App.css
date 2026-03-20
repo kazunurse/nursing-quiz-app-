@@ -1079,6 +1079,53 @@
   color: #666;
 }
 
+/* ダッシュボード プログレスバー */
+.dashboard-progress {
+  margin-bottom: 1.2rem;
+}
+
+.dashboard-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
+.dashboard-progress-label {
+  font-size: 0.9rem;
+  color: #555;
+  font-weight: bold;
+}
+
+.dashboard-progress-value {
+  font-size: 0.9rem;
+  color: #5A8A9A;
+  font-weight: bold;
+}
+
+.dashboard-progress-bar {
+  width: 100%;
+  height: 12px;
+  background: #e8f0f3;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.dashboard-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #7CB8C9 0%, #5A8A9A 100%);
+  border-radius: 6px;
+  transition: width 0.4s ease;
+  min-width: 0%;
+}
+
+.dashboard-progress-percent {
+  text-align: right;
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 0.2rem;
+}
+
 /* 間違えた問題ボタン */
 .wrong-challenge-btn {
   width: 100%;
