@@ -9,7 +9,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "fetch-notion": "node scripts/fetch-notion.js",
-    "update": "npm run fetch-notion && npm run build"
+    "fetch-notion-rate": "node scripts/fetch-notion-rate.js",
+    "update": "npm run fetch-notion && npm run build",
+    "update-rate": "npm run fetch-notion-rate && npm run build"
   },
   "dependencies": {
     "@notionhq/client": "^5.11.0",
