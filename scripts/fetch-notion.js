@@ -69,7 +69,7 @@ function parseQuestion(text) {
   let inChoices = false;
 
   for (const line of lines) {
-    const choiceMatch = line.match(/^([1-4])[.）\)]\s*(.+)/);
+    const choiceMatch = line.match(/^([1-9])[.）\)]\s*(.+)/);
     if (choiceMatch) {
       inChoices = true;
       choices.push(choiceMatch[2].trim());
