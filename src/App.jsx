@@ -79,6 +79,12 @@ const getCategoryIcon = (categoryName) => {
   return categoryIcons[categoryName] || categoryIcons['default']
 }
 
+// 長いカテゴリー名を短縮表示するマッピング
+const categoryShortNames = {
+  '免疫・アレルギー・膠原病': '免疫アレルギー膠原病',
+}
+const getDisplayName = (name) => categoryShortNames[name] || name
+
 // ローカルストレージのキー
 const STORAGE_KEYS = {
   HISTORY: 'nursing-quiz-history',
@@ -638,7 +644,7 @@ function App() {
                     <div className="category-icon">
                       <IconComponent />
                     </div>
-                    <span className="category-name">{category.name}</span>
+                    <span className="category-name">{getDisplayName(category.name)}</span>
                     <span className="category-count">{category.questionCount}問</span>
                     {hasProgress && (
                       <span className="category-progress-badge">
