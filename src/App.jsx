@@ -644,7 +644,7 @@ function App() {
                     <div className="category-icon">
                       <IconComponent />
                     </div>
-                    <span className="category-name">{getDisplayName(category.name)}</span>
+                    <span className={`category-name${getDisplayName(category.name).length > 7 ? ' category-name-sm' : ''}`}>{getDisplayName(category.name)}</span>
                     <span className="category-count">{category.questionCount}問</span>
                     {hasProgress && (
                       <span className="category-progress-badge">
