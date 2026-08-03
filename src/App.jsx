@@ -9,7 +9,7 @@ import {
   FaEye, FaHandHoldingMedical, FaShieldVirus, FaBaby,
   FaCut, FaRibbon, FaBalanceScale, FaAppleAlt, FaRunning,
   FaAllergies, FaBacteria, FaTint, FaThermometerHalf,
-  FaPlayCircle, FaSave
+  FaPlayCircle, FaSave, FaCommentDots
 } from 'react-icons/fa'
 import { GiKidneys, GiStomach, GiMedicines, GiNurseFemale, GiSkeletonInside } from 'react-icons/gi'
 import { MdQuiz, MdPlayArrow, MdBloodtype, MdOutlineElderly } from 'react-icons/md'
@@ -113,6 +113,18 @@ const storage = {
   }
 }
 
+// 改善点フィードバック（GAS連携）
+const FEEDBACK_GAS_URL = 'https://script.google.com/macros/s/AKfycbxXjDieULh5i5sLAeY1xIDtBj1HDoYykZAvx_DGUahhPu-kvrrShlCtAoyPFZJPTcN5JA/exec'
+
+function getUID() {
+  let uid = localStorage.getItem('nursing-quiz-uid')
+  if (!uid) {
+    uid = 'quiz_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8)
+    localStorage.setItem('nursing-quiz-uid', uid)
+  }
+  return uid
+}
+
 function App() {
   const [data, setData] = useState(null)
   const [screen, setScreen] = useState('home') // home, category, quiz, result, history, wrong
@@ -131,6 +143,11 @@ function App() {
   const [showContinueModal, setShowContinueModal] = useState(false)  // 続きから/最初からモーダル
   const [pendingCategory, setPendingCategory] = useState(null)  // モーダル表示中のカテゴリー
   const [showHelp, setShowHelp] = useState(false)  // ヘルプモーダル
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false)  // 改善点フィードバックモーダル
+  const [feedbackType, setFeedbackType] = useState('要望')
+  const [feedbackCategory, setFeedbackCategory] = useState('')
+  const [feedbackMessage, setFeedbackMessage] = useState('')
+  const [feedbackSubmitting, setFeedbackSubmitting] = useState(false)
 
   // データと保存データを読み込み
   useEffect(() => {
@@ -488,6 +505,44 @@ function App() {
     }
   }
 
+  // 改善点フィードバック送信
+  const openFeedbackModal = () => {
+    setFeedbackType('要望')
+    setFeedbackCategory('')
+    setFeedbackMessage('')
+    setShowFeedbackModal(true)
+  }
+
+  const submitFeedback = () => {
+    if (!feedbackMessage.trim()) {
+      alert('内容を入力してください')
+      return
+    }
+    setFeedbackSubmitting(true)
+    const params = new URLSearchParams({
+      action: 'addFeedback',
+      uid: getUID(),
+      type: feedbackType,
+      category: feedbackCategory,
+      message: feedbackMessage.trim()
+    })
+    fetch(`${FEEDBACK_GAS_URL}?${params.toString()}`)
+      .then(res => res.json())
+      .then(res => {
+        setFeedbackSubmitting(false)
+        if (res.ok) {
+          setShowFeedbackModal(false)
+          alert('ご意見ありがとうございました🙏')
+        } else {
+          alert('送信に失敗しました。時間をおいて再度お試しください。')
+        }
+      })
+      .catch(() => {
+        setFeedbackSubmitting(false)
+        alert('通信エラーが発生しました。')
+      })
+  }
+
   // ホーム画面
   if (screen === 'home') {
     const overallPercentage = stats.totalQuestions > 0
@@ -695,6 +750,62 @@ function App() {
         <footer className="footer">
           <p>最終更新: {new Date(data.lastUpdated).toLocaleDateString('ja-JP')}</p>
         </footer>
+
+        {/* 改善点フィードバックFAB */}
+        <button className="feedback-fab" onClick={openFeedbackModal}>
+          <FaCommentDots /> ご意見・改善点
+        </button>
+
+        {showFeedbackModal && (
+          <div className="modal-overlay" onClick={() => !feedbackSubmitting && setShowFeedbackModal(false)}>
+            <div className="modal-content feedback-modal" onClick={e => e.stopPropagation()}>
+              <h2><FaCommentDots /> ご意見・改善点</h2>
+              <select
+                className="feedback-select"
+                value={feedbackType}
+                onChange={e => setFeedbackType(e.target.value)}
+              >
+                <option value="要望">要望</option>
+                <option value="誤字・解説の誤り">誤字・解説の誤り</option>
+                <option value="わかりにくい">わかりにくい</option>
+                <option value="不具合">不具合</option>
+                <option value="その他">その他</option>
+              </select>
+              <select
+                className="feedback-select"
+                value={feedbackCategory}
+                onChange={e => setFeedbackCategory(e.target.value)}
+              >
+                <option value="">カテゴリー（任意）</option>
+                {data.categories.map(category => (
+                  <option key={category.id} value={category.name}>{category.name}</option>
+                ))}
+              </select>
+              <textarea
+                className="feedback-textarea"
+                placeholder="内容をご記入ください"
+                value={feedbackMessage}
+                onChange={e => setFeedbackMessage(e.target.value)}
+              />
+              <div className="feedback-modal-actions">
+                <button
+                  className="feedback-cancel-btn"
+                  onClick={() => setShowFeedbackModal(false)}
+                  disabled={feedbackSubmitting}
+                >
+                  キャンセル
+                </button>
+                <button
+                  className="feedback-submit-btn"
+                  onClick={submitFeedback}
+                  disabled={feedbackSubmitting}
+                >
+                  {feedbackSubmitting ? '送信中…' : '送信する'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     )
   }
