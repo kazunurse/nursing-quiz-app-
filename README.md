@@ -1,7 +1,9 @@
 # 看護師国家試験アプリ - かずからの挑戦状
 
 ## サイトURL
-https://deft-profiterole-9ab44b.netlify.app
+https://iridescent-crumble-8f6b5f.netlify.app
+
+（旧URL https://deft-profiterole-9ab44b.netlify.app は別の古いNetlifyサイト。2026-08-03に判明・以降はこちらのURLを正とする）
 
 ---
 
