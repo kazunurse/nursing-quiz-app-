@@ -1080,6 +1080,96 @@
 }
 
 /* 結果アクション */
+/* LINE誘導＋シェアカード */
+.line-cta-card {
+  background: linear-gradient(135deg, #E9FBF0 0%, #DFF6E8 100%);
+  border: 2px solid #06C755;
+  border-radius: 16px;
+  padding: 1.25rem;
+  margin: 1.25rem 0;
+  text-align: center;
+}
+
+.line-cta-title {
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 1rem;
+}
+
+.line-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #06C755;
+  color: white;
+  font-weight: bold;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 1.05rem;
+  transition: transform 0.2s;
+}
+
+.line-cta-btn:hover {
+  transform: translateY(-2px);
+}
+
+.line-cta-note {
+  margin: 0.75rem 0 0;
+  font-size: 0.85rem;
+  color: #4A6670;
+}
+
+.share-section {
+  margin-top: 1.1rem;
+  padding-top: 1.1rem;
+  border-top: 1px dashed #B8E0D2;
+}
+
+.share-section-title {
+  font-size: 0.9rem;
+  color: #333;
+  margin: 0 0 0.75rem;
+}
+
+.share-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: white;
+  transition: transform 0.2s;
+}
+
+.share-btn:hover {
+  transform: translateY(-2px);
+}
+
+.share-btn-x {
+  background: #000;
+}
+
+.share-btn-line {
+  background: #06C755;
+}
+
 .result-actions {
   display: flex;
   flex-direction: column;

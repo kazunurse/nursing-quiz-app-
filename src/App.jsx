@@ -9,11 +9,18 @@ import {
   FaEye, FaHandHoldingMedical, FaShieldVirus, FaBaby,
   FaCut, FaRibbon, FaBalanceScale, FaAppleAlt, FaRunning,
   FaAllergies, FaBacteria, FaTint, FaThermometerHalf,
-  FaPlayCircle, FaSave, FaCommentDots
+  FaPlayCircle, FaSave, FaCommentDots, FaLine, FaShareAlt, FaGift
 } from 'react-icons/fa'
+import { FaXTwitter } from 'react-icons/fa6'
 import { GiKidneys, GiStomach, GiMedicines, GiNurseFemale, GiSkeletonInside } from 'react-icons/gi'
 import { MdQuiz, MdPlayArrow, MdBloodtype, MdOutlineElderly } from 'react-icons/md'
 import { BiBody } from 'react-icons/bi'
+
+// 公式LINE友だち追加URL（かずさんの各種LP・SNSで統一使用しているshortlink）
+const LINE_ADD_FRIEND_URL = 'https://lin.ee/NhhFjUb'
+// このアプリ自体の公開URL（シェア用）
+const APP_SHARE_URL = 'https://iridescent-crumble-8f6b5f.netlify.app/'
+const SHARE_TEXT = '【無料】看護師国家試験の過去問・予想問題が解けるアプリ「かずからの挑戦状」📚 保存推奨です🔖'
 
 // 問題データをインポート（Notionから取得したデータ）
 // データがない場合はサンプルデータを使用
@@ -148,6 +155,7 @@ function App() {
   const [feedbackCategory, setFeedbackCategory] = useState('')
   const [feedbackMessage, setFeedbackMessage] = useState('')
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false)
+  const [showShareSection, setShowShareSection] = useState(false)  // LINE追加後に表示するシェア導線
 
   // データと保存データを読み込み
   useEffect(() => {
@@ -449,6 +457,7 @@ function App() {
     setScreen('home')
     setSelectedCategory(null)
     setQuizQuestions([])
+    setShowShareSection(false)
   }
 
   // 一時保存してホームに戻る
@@ -1057,6 +1066,44 @@ function App() {
 
           <p className="save-notice">結果は自動保存されました</p>
 
+          <div className="line-cta-card">
+            <p className="line-cta-title"><FaGift className="btn-icon" /> 公式LINEで追加問題・詳しい解説をプレゼント🎁</p>
+            <a
+              href={LINE_ADD_FRIEND_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="line-cta-btn"
+              onClick={() => setShowShareSection(true)}
+            >
+              <FaLine className="btn-icon" /> 公式LINEを追加する
+            </a>
+            <p className="line-cta-note">友だち追加後、トーク画面で「クイズ」と送ってください！</p>
+
+            {showShareSection && (
+              <div className="share-section">
+                <p className="share-section-title">友だちにもシェアしてもらえると嬉しいです✨</p>
+                <div className="share-buttons">
+                  <a
+                    className="share-btn share-btn-x"
+                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(SHARE_TEXT)}&url=${encodeURIComponent(APP_SHARE_URL)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FaXTwitter className="btn-icon" /> シェア
+                  </a>
+                  <a
+                    className="share-btn share-btn-line"
+                    href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(APP_SHARE_URL)}&text=${encodeURIComponent(SHARE_TEXT)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FaShareAlt className="btn-icon" /> LINEでシェア
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+
           <div className="result-actions">
             <button className="retry-btn" onClick={() => {
               setCurrentQuestionIndex(0)
@@ -1064,6 +1111,7 @@ function App() {
               setAnswers([])
               setSelectedAnswers([])
               setShowExplanation(false)
+              setShowShareSection(false)
               setScreen('quiz')
             }}>
               <FaRedo className="btn-icon" /> もう一度挑戦
