@@ -9,9 +9,8 @@ import {
   FaEye, FaHandHoldingMedical, FaShieldVirus, FaBaby,
   FaCut, FaRibbon, FaBalanceScale, FaAppleAlt, FaRunning,
   FaAllergies, FaBacteria, FaTint, FaThermometerHalf,
-  FaPlayCircle, FaSave, FaCommentDots, FaLine, FaShareAlt, FaGift
+  FaPlayCircle, FaSave, FaCommentDots, FaLine, FaShareAlt, FaGift, FaInstagram
 } from 'react-icons/fa'
-import { FaXTwitter } from 'react-icons/fa6'
 import { GiKidneys, GiStomach, GiMedicines, GiNurseFemale, GiSkeletonInside } from 'react-icons/gi'
 import { MdQuiz, MdPlayArrow, MdBloodtype, MdOutlineElderly } from 'react-icons/md'
 import { BiBody } from 'react-icons/bi'
@@ -1084,14 +1083,6 @@ function App() {
                 <p className="share-section-title">友だちにもシェアしてもらえると嬉しいです✨</p>
                 <div className="share-buttons">
                   <a
-                    className="share-btn share-btn-x"
-                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(SHARE_TEXT)}&url=${encodeURIComponent(APP_SHARE_URL)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <FaXTwitter className="btn-icon" /> シェア
-                  </a>
-                  <a
                     className="share-btn share-btn-line"
                     href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(APP_SHARE_URL)}&text=${encodeURIComponent(SHARE_TEXT)}`}
                     target="_blank"
@@ -1100,6 +1091,9 @@ function App() {
                     <FaShareAlt className="btn-icon" /> LINEでシェア
                   </a>
                 </div>
+                <p className="share-ig-hint">
+                  <FaInstagram className="btn-icon" /> Instagramでシェアするときは、この画面をスクショしてストーリーズに投稿してね📸
+                </p>
               </div>
             )}
           </div>
