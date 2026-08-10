@@ -631,6 +631,20 @@ function App() {
         )}
 
         <main className="main">
+          {/* 公式LINE登録CTA（ホーム画面） */}
+          <div className="line-cta-card line-cta-card-home">
+            <p className="line-cta-title"><FaGift className="btn-icon" /> 公式LINEで追加問題・詳しい解説をプレゼント🎁</p>
+            <a
+              href={LINE_ADD_FRIEND_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="line-cta-btn"
+            >
+              <FaLine className="btn-icon" /> 公式LINEを追加する
+            </a>
+            <p className="line-cta-note">友だち追加後、トーク画面で「クイズ」と送ってください！</p>
+          </div>
+
           {/* ダッシュボード */}
           <div className="stats-card">
             <h3><FaChartLine className="section-icon" /> 学習ダッシュボード</h3>
