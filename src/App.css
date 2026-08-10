@@ -1151,11 +1151,24 @@
   gap: 0.4rem;
   padding: 0.6rem 1.1rem;
   border-radius: 999px;
+  border: none;
   text-decoration: none;
   font-weight: bold;
   font-size: 0.9rem;
   color: white;
+  cursor: pointer;
   transition: transform 0.2s;
+  font-family: inherit;
+}
+
+.share-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+  transform: none;
+}
+
+.share-btn-ig {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
 }
 
 .share-btn:hover {

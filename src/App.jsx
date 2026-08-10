@@ -21,6 +21,66 @@ const LINE_ADD_FRIEND_URL = 'https://lin.ee/NhhFjUb'
 const APP_SHARE_URL = 'https://iridescent-crumble-8f6b5f.netlify.app/'
 const SHARE_TEXT = '【無料】看護師国家試験の過去問・予想問題が解けるアプリ「かずからの挑戦状」📚 保存推奨です🔖'
 
+// 結果をInstagramストーリーズ等でシェアするためのスコアカード画像を生成（9:16縦長）
+function generateShareCardImage(score, total, percentage, categoryName) {
+  return new Promise((resolve) => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 1080
+    canvas.height = 1920
+    const ctx = canvas.getContext('2d')
+
+    const grad = ctx.createLinearGradient(0, 0, 0, canvas.height)
+    grad.addColorStop(0, '#1A6B8A')
+    grad.addColorStop(1, '#0E4A63')
+    ctx.fillStyle = grad
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    ctx.textAlign = 'center'
+    ctx.fillStyle = '#ffffff'
+
+    ctx.font = 'bold 56px sans-serif'
+    ctx.fillText('看護師国家試験対策', canvas.width / 2, 300)
+    ctx.font = 'bold 72px sans-serif'
+    ctx.fillText('かず学長の挑戦状', canvas.width / 2, 390)
+
+    // カード
+    const cardX = 90, cardY = 560, cardW = canvas.width - 180, cardH = 760
+    ctx.fillStyle = 'rgba(255,255,255,0.97)'
+    ctx.beginPath()
+    ctx.roundRect(cardX, cardY, cardW, cardH, 48)
+    ctx.fill()
+
+    ctx.fillStyle = '#1A6B8A'
+    ctx.font = '44px sans-serif'
+    ctx.fillText(categoryName || '全問チャレンジ', canvas.width / 2, cardY + 130)
+
+    ctx.font = 'bold 260px sans-serif'
+    ctx.fillText(`${percentage}%`, canvas.width / 2, cardY + 420)
+
+    ctx.font = '52px sans-serif'
+    ctx.fillStyle = '#4A6670'
+    ctx.fillText(`${score} / ${total} 問正解`, canvas.width / 2, cardY + 510)
+
+    let msg = '復習しましょう！📚'
+    if (percentage === 100) msg = '完璧！素晴らしい！🎉'
+    else if (percentage >= 80) msg = '優秀です！😊'
+    else if (percentage >= 60) msg = 'もう少しで合格ライン！💪'
+    ctx.font = 'bold 56px sans-serif'
+    ctx.fillStyle = '#1A6B8A'
+    ctx.fillText(msg, canvas.width / 2, cardY + 640)
+
+    ctx.fillStyle = '#ffffff'
+    ctx.font = 'bold 44px sans-serif'
+    ctx.fillText('無料の看護師国試アプリ', canvas.width / 2, 1500)
+    ctx.font = '38px sans-serif'
+    ctx.fillText('公式LINEで追加問題プレゼント中🎁', canvas.width / 2, 1560)
+    ctx.font = 'bold 42px sans-serif'
+    ctx.fillText('Nurse Path+', canvas.width / 2, 1700)
+
+    canvas.toBlob((blob) => resolve(blob), 'image/png')
+  })
+}
+
 // 問題データをインポート（Notionから取得したデータ）
 // データがない場合はサンプルデータを使用
 const sampleData = {
@@ -154,6 +214,7 @@ function App() {
   const [feedbackCategory, setFeedbackCategory] = useState('')
   const [feedbackMessage, setFeedbackMessage] = useState('')
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false)
+  const [shareImageSubmitting, setShareImageSubmitting] = useState(false)
 
   // データと保存データを読み込み
   useEffect(() => {
@@ -455,6 +516,39 @@ function App() {
     setScreen('home')
     setSelectedCategory(null)
     setQuizQuestions([])
+  }
+
+  // スコアカード画像を生成してOSの共有シート（Instagramストーリーズ等）でシェア
+  const handleImageShare = async (score, total, percentage, categoryName) => {
+    if (shareImageSubmitting) return
+    setShareImageSubmitting(true)
+    try {
+      const blob = await generateShareCardImage(score, total, percentage, categoryName)
+      const file = new File([blob], 'nurse-path-quiz-result.png', { type: 'image/png' })
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'かずからの挑戦状',
+          text: SHARE_TEXT,
+        })
+      } else {
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = 'nurse-path-quiz-result.png'
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        URL.revokeObjectURL(url)
+        alert('画像を保存しました！Instagramのストーリーズから投稿してね📸')
+      }
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        alert('シェアに失敗しました。もう一度お試しください。')
+      }
+    } finally {
+      setShareImageSubmitting(false)
+    }
   }
 
   // 一時保存してホームに戻る
@@ -1092,6 +1186,14 @@ function App() {
             <div className="share-section">
               <p className="share-section-title">友だちにもシェアしてもらえると嬉しいです✨</p>
               <div className="share-buttons">
+                <button
+                  type="button"
+                  className="share-btn share-btn-ig"
+                  onClick={() => handleImageShare(score, quizQuestions.length, percentage, selectedCategory?.name)}
+                  disabled={shareImageSubmitting}
+                >
+                  <FaInstagram className="btn-icon" /> {shareImageSubmitting ? '準備中…' : '画像でシェア'}
+                </button>
                 <a
                   className="share-btn share-btn-line"
                   href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(APP_SHARE_URL)}&text=${encodeURIComponent(SHARE_TEXT)}`}
@@ -1102,7 +1204,7 @@ function App() {
                 </a>
               </div>
               <p className="share-ig-hint">
-                <FaInstagram className="btn-icon" /> Instagramでシェアするときは、この画面をスクショしてストーリーズに投稿してね📸
+                スマホなら「画像でシェア」からInstagramストーリーズに直接投稿できます（対応していない端末はスクショでシェアしてね📸）
               </p>
             </div>
           </div>
