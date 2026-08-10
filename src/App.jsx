@@ -154,7 +154,6 @@ function App() {
   const [feedbackCategory, setFeedbackCategory] = useState('')
   const [feedbackMessage, setFeedbackMessage] = useState('')
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false)
-  const [showShareSection, setShowShareSection] = useState(false)  // LINE追加後に表示するシェア導線
 
   // データと保存データを読み込み
   useEffect(() => {
@@ -456,7 +455,6 @@ function App() {
     setScreen('home')
     setSelectedCategory(null)
     setQuizQuestions([])
-    setShowShareSection(false)
   }
 
   // 一時保存してホームに戻る
@@ -1072,30 +1070,27 @@ function App() {
               target="_blank"
               rel="noopener noreferrer"
               className="line-cta-btn"
-              onClick={() => setShowShareSection(true)}
             >
               <FaLine className="btn-icon" /> 公式LINEを追加する
             </a>
             <p className="line-cta-note">友だち追加後、トーク画面で「クイズ」と送ってください！</p>
 
-            {showShareSection && (
-              <div className="share-section">
-                <p className="share-section-title">友だちにもシェアしてもらえると嬉しいです✨</p>
-                <div className="share-buttons">
-                  <a
-                    className="share-btn share-btn-line"
-                    href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(APP_SHARE_URL)}&text=${encodeURIComponent(SHARE_TEXT)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <FaShareAlt className="btn-icon" /> LINEでシェア
-                  </a>
-                </div>
-                <p className="share-ig-hint">
-                  <FaInstagram className="btn-icon" /> Instagramでシェアするときは、この画面をスクショしてストーリーズに投稿してね📸
-                </p>
+            <div className="share-section">
+              <p className="share-section-title">友だちにもシェアしてもらえると嬉しいです✨</p>
+              <div className="share-buttons">
+                <a
+                  className="share-btn share-btn-line"
+                  href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(APP_SHARE_URL)}&text=${encodeURIComponent(SHARE_TEXT)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <FaShareAlt className="btn-icon" /> LINEでシェア
+                </a>
               </div>
-            )}
+              <p className="share-ig-hint">
+                <FaInstagram className="btn-icon" /> Instagramでシェアするときは、この画面をスクショしてストーリーズに投稿してね📸
+              </p>
+            </div>
           </div>
 
           <div className="result-actions">
@@ -1105,7 +1100,6 @@ function App() {
               setAnswers([])
               setSelectedAnswers([])
               setShowExplanation(false)
-              setShowShareSection(false)
               setScreen('quiz')
             }}>
               <FaRedo className="btn-icon" /> もう一度挑戦
