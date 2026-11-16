@@ -32,6 +32,13 @@ async function notionRequest(endpoint, method = 'GET', body = null) {
   return response.json();
 }
 
+// rich_text は、リンクや書式で複数の区切りに分かれることがある（例：「2.CA19-9」が自動でリンクになる）。
+// 先頭だけ読むと、その後ろが欠けるので、全部つなげて読む（2026-11-16 修正）
+function richText(prop) {
+  const arr = prop?.rich_text || [];
+  return arr.map(t => t.plain_text || '').join('');
+}
+
 // カテゴリーページのマッピング
 const CATEGORIES = [
   { id: '2f3a79a5bcf0810b85afe28ad8702a12', name: '循環器系' },
@@ -112,11 +119,11 @@ async function getQuestionsFromDatabase(databaseId, categoryName) {
       const props = page.properties;
 
       // 問題文を取得
-      const questionText = props['問題文']?.rich_text?.[0]?.plain_text || '';
+      const questionText = richText(props['問題文']);
       const { question, choices } = parseQuestion(questionText);
 
       // 正解を取得（複数回答対応: "1, 2" → [0, 1]）
-      const answerText = props['正解']?.rich_text?.[0]?.plain_text || '';
+      const answerText = richText(props['正解']);
       let answer;
       if (answerText.includes(',')) {
         // カンマ区切りの場合は配列として処理
@@ -128,7 +135,7 @@ async function getQuestionsFromDatabase(databaseId, categoryName) {
       }
 
       // 解説を取得
-      const explanation = props['解説']?.rich_text?.[0]?.plain_text || '';
+      const explanation = richText(props['解説']);
 
       // タグを取得
       const tags = props['タグ']?.multi_select?.map(t => t.name) || [];
