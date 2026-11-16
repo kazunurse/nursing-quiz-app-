@@ -155,6 +155,8 @@ async function getQuestionsFromDatabase(databaseId, categoryName) {
 
 // ユーザー入力を取得
 function askQuestion(query) {
+  // --yes を付けると確認なしで進む（取り込み・自動実行用／確認待ちで止まる問題の対策 2026-11-16）
+  if (process.argv.includes('--yes')) { console.log(query + 'y（--yes）'); return Promise.resolve('y'); }
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,

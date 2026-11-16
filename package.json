@@ -10,8 +10,11 @@
     "preview": "vite preview",
     "fetch-notion": "node scripts/fetch-notion.js",
     "fetch-notion-rate": "node scripts/fetch-notion-rate.js",
-    "update": "npm run fetch-notion && npm run build",
-    "update-rate": "npm run fetch-notion-rate && npm run build"
+    "update": "npm run fetch-notion && npm run check && npm run build",
+    "update-rate": "npm run fetch-notion-rate && npm run build",
+    "check": "node scripts/check-consistency.js && node scripts/fact-lint.js",
+    "fetch-notion:yes": "node scripts/fetch-notion.js --yes",
+    "update:yes": "npm run fetch-notion:yes && npm run check && npm run build"
   },
   "dependencies": {
     "@notionhq/client": "^5.11.0",
