@@ -7,6 +7,8 @@ import readline from 'readline';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+function richText(prop) { return (prop?.rich_text || []).map(t => t.plain_text || '').join(''); }
+
 const NOTION_API_KEY = process.env.NOTION_API_KEY;
 const NOTION_VERSION = '2022-06-28';
 
@@ -100,11 +102,11 @@ async function getQuestionsFromRate(rate, pageId) {
 
   for (const page of pages) {
     const props = page.properties;
-    const questionText = props['問題文']?.rich_text?.[0]?.plain_text || '';
+    const questionText = richText(props['問題文']);
     const { question, choices } = parseQuestion(questionText);
-    const answerText = props['回答']?.rich_text?.[0]?.plain_text || '';
+    const answerText = richText(props['回答']);
     const bunya = props['分野']?.select?.name || '';
-    const explanation = props['解説']?.rich_text?.[0]?.plain_text || '';
+    const explanation = richText(props['解説']);
     const dateStr = props['日付']?.date?.start || '';
 
     // 回答番号を数値に変換（0始まり）
