@@ -660,7 +660,7 @@ function App() {
     return (
       <div className="app">
         <header className="header">
-          <img src="/hero.png" alt="看護師国家試験対策 - かず学長の挑戦状" className="hero-image" />
+          <img src="/hero.png" alt="看護師国家試験対策 - かず学長の挑戦状" className="hero-image" width="1200" height="453" />
           <p className="app-name">Nurse Path+</p>
           <button className="help-btn-main" onClick={() => setShowHelp(true)}>
             <FaQuestionCircle /> 使い方
